@@ -44,6 +44,10 @@ end_date_str = end_date.strftime('%Y-%m-%d')
 # Ventana para el cálculo móvil (rolling)
 rolling_window = st.sidebar.slider('Ventana Móvil (Días)', min_value=10, max_value=252, value=39, step=1)
 
+# Botón para iniciar el cálculo (se activa después de seleccionar la media móvil)
+if st.sidebar.button('Calcular'):
+    st.session_state.calcular = True
+
 
 # --- 2. Descarga de Datos (para todos los tickers) ---
 st.header('Descarga de Datos')
@@ -66,8 +70,8 @@ def download_data(tickers, start, end):
     except Exception as e:
         return None, f"Ocurrió un error al descargar los datos: {e}" # Retorna None y el mensaje de error
 
-data, download_error = download_data(tickers, start_date_str, end_date_str)
-
+if 'calcular' in st.session_state and st.session_state.calcular:
+    data, download_error = download_data(tickers, start_date_str, end_date_str)
 if download_error:
     st.error(download_error)
     st.stop() # Detiene la ejecución si hay un error de descarga
