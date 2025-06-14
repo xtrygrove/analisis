@@ -21,36 +21,26 @@ plt.style.use('seaborn-v0_8-darkgrid')
 
 st.title('Análisis de Betas Móviles del S&P 500')
 
-# --- Sidebar para Configuración de Parámetros ---
-st.sidebar.header('Configuración de Parámetros')
-
-# Tickers (fijos por ahora, se podrían hacer configurables)
+# --- Parámetros Fijos ---
+# Tickers
 tickers = ['^GSPC', '^TNX', '^VIX']
 ticker_names = {'^GSPC': 'SPX', '^TNX': 'TNX', '^VIX': 'VIX'}
 
 # Ventana para el cálculo móvil (rolling) - Fija a 39 días
 rolling_window = 39
-st.sidebar.markdown(f"**Ventana Móvil (Días):** {rolling_window} (fija)")
 
-# Rango de fechas configurable
+# Rango de fechas - Fijo al último año
 today = datetime.date.today()
-
-st.sidebar.markdown("---")
-st.sidebar.markdown("**Rango de Fechas (predeterminado: último año):**")
-# Default dates for 39-day window: last year
-default_start_val = today - datetime.timedelta(days=365)
-default_end_val = today
-start_date = st.sidebar.date_input('Fecha de Inicio', default_start_val, key='date_input_start_39') # Usamos la key existente
-end_date = st.sidebar.date_input('Fecha de Fin', default_end_val, key='date_input_end_39') # Usamos la key existente
+start_date = today - datetime.timedelta(days=365)
+end_date = today
 
 # Convertir a string para yfinance
 start_date_str = start_date.strftime('%Y-%m-%d')
 end_date_str = end_date.strftime('%Y-%m-%d')
 
-# Botón para iniciar el cálculo (se activa después de seleccionar la media móvil)
-if st.sidebar.button('Calcular'):
-    st.session_state.calcular = True
-
+# No hay botón "Calcular", los cálculos se ejecutan directamente.
+# Inicializar 'data' como un DataFrame vacío para evitar errores si la descarga falla
+data = pd.DataFrame()
 
 # --- 2. Descarga de Datos (para todos los tickers) ---
 # st.header('Descarga de Datos') # Eliminado para simplificar la vista
@@ -73,11 +63,11 @@ def download_data(tickers, start, end):
     except Exception as e:
         return None, f"Ocurrió un error al descargar los datos: {e}" # Retorna None y el mensaje de error
 
-if 'calcular' in st.session_state and st.session_state.calcular:
-    data, download_error = download_data(tickers, start_date_str, end_date_str)
+# Descargar datos (se ejecuta siempre al cargar/refrescar la app)
+data, download_error = download_data(tickers, start_date_str, end_date_str)
 if download_error:
-        st.error(download_error)
-        st.stop() # Detiene la ejecución si hay un error de descarga
+    st.error(download_error)
+    st.stop() # Detiene la ejecución si hay un error de descarga
 
 # st.write("Datos descargados exitosamente:") # Eliminado para simplificar la vista
 # st.dataframe(data.tail()) # Eliminado para simplificar la vista
@@ -291,17 +281,8 @@ if 'rolling_beta_spx_vix' in data.columns and 'SPX' in data.columns:
     y_min_fill_vix = data['SPX'].min() * 0.9
     y_max_fill_vix = data['SPX'].max() * 1.1
 
-    if positive_beta_vix_condition.any():
-        ax2_price_vix.fill_between(
-            data.index, y_min_fill_vix, y_max_fill_vix,
-            where=positive_beta_vix_condition,
-            color='green',
-            alpha=0.25,
-            interpolate=True,
-            label='Beta SPX/VIX > 0 (Correlación Positiva)'
-        )
-
     if negative_beta_vix_condition.any():
+        # Solo mostrar el régimen de beta negativa (rojo)
         ax2_price_vix.fill_between(
             data.index, y_min_fill_vix, y_max_fill_vix,
             where=negative_beta_vix_condition,
@@ -310,7 +291,6 @@ if 'rolling_beta_spx_vix' in data.columns and 'SPX' in data.columns:
             interpolate=True,
             label='Beta SPX/VIX < 0 (Correlación Negativa)'
         )
-
 
     ax2_price_vix.set_ylabel('Precio del S&P 500 (SPX)', fontsize=10)
     ax2_price_vix.set_xlabel('Fecha', fontsize=10)
