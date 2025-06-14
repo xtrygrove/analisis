@@ -261,49 +261,27 @@ else:
 if 'rolling_beta_spx_vix' in data.columns and 'SPX' in data.columns:
     st.subheader('Beta SPX/VIX y Precio del SPX') # Estilo ya aplicado globalmente
 
-    fig2, (ax1_beta_vix, ax2_price_vix) = plt.subplots(
-        2, 1,
-        figsize=(12, 8),
-        sharex=True, # Sincronizar el eje de fechas
-        gridspec_kw={'height_ratios': [1, 2]} # Dar más espacio al gráfico de precios
-    )
+    # Modificado para mostrar solo un gráfico: Beta SPX/VIX
+    fig2, ax1_beta_vix = plt.subplots(figsize=(12, 5))
 
     # --- Gráfico Superior (Beta SPX/VIX) ---
     ax1_beta_vix.plot(data.index, data['rolling_beta_spx_vix'], color='cyan', linewidth=1.5)
     ax1_beta_vix.axhline(0, color='grey', linestyle='--', linewidth=0.7, alpha=0.8)
     ax1_beta_vix.set_title(f'Beta Móvil (39 Días) del S&P 500 vs VIX', fontsize=14)
     ax1_beta_vix.set_ylabel('Beta Móvil SPX/VIX', fontsize=10)
+    ax1_beta_vix.set_xlabel('Fecha', fontsize=10) # Añadir etiqueta X ya que es el único gráfico
     ax1_beta_vix.grid(True, which='both', linestyle='--', linewidth=0.5, alpha=0.7)
-
-
-    # --- Gráfico Inferior (Precio del SPX con Regímenes de Beta SPX/VIX) ---
-    ax2_price_vix.plot(data.index, data['SPX'], color='steelblue', linewidth=1.5, label='Precio S&P 500')
-
-    # Definir las condiciones para colorear el fondo según la beta SPX/VIX
-    # La beta SPX/VIX generalmente es negativa.
-    positive_beta_vix_condition = data['rolling_beta_spx_vix'] > 0
-    negative_beta_vix_condition = data['rolling_beta_spx_vix'] <= 0
-
-    y_min_fill_vix = data['SPX'].min() * 0.9
-    y_max_fill_vix = data['SPX'].max() * 1.1
-
-    ax2_price_vix.set_ylabel('Precio del S&P 500 (SPX)', fontsize=10)
-    ax2_price_vix.set_xlabel('Fecha', fontsize=10)
-    ax2_price_vix.grid(True, which='both', linestyle='--', linewidth=0.5, alpha=0.7)
-    ax2_price_vix.legend(loc='upper left')
-
 
     # --- Finalización y Muestra del Gráfico 2 ---
     fig2.autofmt_xdate()
-    ax2_price_vix.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d'))
-    ax2_price_vix.xaxis.set_major_locator(mdates.AutoDateLocator())
+    ax1_beta_vix.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d'))
+    ax1_beta_vix.xaxis.set_major_locator(mdates.AutoDateLocator())
     plt.tight_layout(pad=2.0) # Añadir padding entre los gráficos
     st.pyplot(fig2)
     plt.close(fig2) # Cerrar la figura
     st.markdown("""
     **Interpretación del Gráfico 2:**
-    *   El gráfico superior muestra la beta móvil de 39 días del S&P 500 (SPX) con respecto al VIX (índice de volatilidad). Históricamente, esta beta tiende a ser negativa (línea cian bajo cero), indicando que el SPX tiende a moverse en dirección opuesta al VIX (cuando el VIX sube, el SPX tiende a bajar, y viceversa).
-    *   El gráfico inferior muestra el precio del SPX. 
+    *   Este gráfico muestra la beta móvil de 39 días del S&P 500 (SPX) con respecto al VIX (índice de volatilidad). Históricamente, esta beta tiende a ser negativa (línea cian bajo cero), indicando que el SPX tiende a moverse en dirección opuesta al VIX (cuando el VIX sube, el SPX tiende a bajar, y viceversa).
     """)
 
 else:
