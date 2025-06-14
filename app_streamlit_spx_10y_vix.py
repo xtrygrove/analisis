@@ -16,6 +16,9 @@ import datetime
 
 st.set_page_config(layout="wide") # Configurar el layout para usar todo el ancho de la página
 
+# Establecer el estilo de Matplotlib globalmente para todos los gráficos
+plt.style.use('seaborn-v0_8-darkgrid')
+
 st.title('Análisis de Betas Móviles del S&P 500')
 
 # --- Sidebar para Configuración de Parámetros ---
@@ -192,7 +195,6 @@ else:
 # Gráfico 1: Beta SPX vs TNX y Precio del SPX con Regímenes de Beta
 if 'rolling_beta_spx_tnx' in data.columns and 'SPX' in data.columns:
     st.subheader('Beta SPX/TNX y Precio del SPX')
-    plt.style.use('seaborn-v0_8-darkgrid') # Usar un estilo diferente para Streamlit
 
     fig1, (ax1_beta_tnx, ax2_price_tnx) = plt.subplots(
         2, 1,
@@ -216,32 +218,30 @@ if 'rolling_beta_spx_tnx' in data.columns and 'SPX' in data.columns:
     positive_beta_tnx_condition = data['rolling_beta_spx_tnx'] > 0
     negative_beta_tnx_condition = data['rolling_beta_spx_tnx'] <= 0
 
-    # Colorear el fondo en verde cuando la beta SPX/TNX es positiva
-    # Asegurarse de que las series de condiciones e índices coincidan
-    valid_indices_tnx = data.index[positive_beta_tnx_condition[positive_beta_tnx_condition.index.isin(data.index)]]
-    if not valid_indices_tnx.empty:
+    # Colorear el fondo según la beta SPX/TNX
+    y_min_fill_tnx = data['SPX'].min() * 0.9
+    y_max_fill_tnx = data['SPX'].max() * 1.1
+
+    if positive_beta_tnx_condition.any():
          ax2_price_tnx.fill_between(
-            valid_indices_tnx,
-            data['SPX'].min() * 0.9,
-            data['SPX'].max() * 1.1, # Rellenar un rango amplio
-            where=positive_beta_tnx_condition[positive_beta_tnx_condition.index.isin(valid_indices_tnx)],
+            data.index, y_min_fill_tnx, y_max_fill_tnx,
+            where=positive_beta_tnx_condition,
             color='green',
             alpha=0.25,
+            interpolate=True,
             label='Beta SPX/TNX > 0 (Correlación Positiva)'
         )
 
-    # Colorear el fondo en rojo cuando la beta SPX/TNX es negativa
-    valid_indices_tnx_neg = data.index[negative_beta_tnx_condition[negative_beta_tnx_condition.index.isin(data.index)]]
-    if not valid_indices_tnx_neg.empty:
+    if negative_beta_tnx_condition.any():
         ax2_price_tnx.fill_between(
-            valid_indices_tnx_neg,
-            data['SPX'].min() * 0.9,
-            data['SPX'].max() * 1.1,
-            where=negative_beta_tnx_condition[negative_beta_tnx_condition.index.isin(valid_indices_tnx_neg)],
+            data.index, y_min_fill_tnx, y_max_fill_tnx,
+            where=negative_beta_tnx_condition,
             color='red',
             alpha=0.25,
+            interpolate=True,
             label='Beta SPX/TNX < 0 (Correlación Negativa)'
         )
+
 
     ax2_price_tnx.set_ylabel('Precio del S&P 500 (SPX)', fontsize=10)
     ax2_price_tnx.set_xlabel('Fecha', fontsize=10)
@@ -256,14 +256,14 @@ if 'rolling_beta_spx_tnx' in data.columns and 'SPX' in data.columns:
     ax2_price_tnx.xaxis.set_major_locator(mdates.AutoDateLocator())
     plt.tight_layout(pad=2.0) # Añadir padding entre los gráficos
     st.pyplot(fig1)
+    plt.close(fig1) # Cerrar la figura para liberar memoria
 else:
     st.warning("Saltando Gráfico 1: Faltan datos o columnas necesarias (rolling_beta_spx_tnx, SPX).")
 
 
 # Gráfico 2: Beta SPX vs VIX y Precio del SPX con Regímenes de Beta
 if 'rolling_beta_spx_vix' in data.columns and 'SPX' in data.columns:
-    st.subheader('Beta SPX/VIX y Precio del SPX')
-    plt.style.use('seaborn-v0_8-darkgrid')
+    st.subheader('Beta SPX/VIX y Precio del SPX') # Estilo ya aplicado globalmente
 
     fig2, (ax1_beta_vix, ax2_price_vix) = plt.subplots(
         2, 1,
@@ -288,31 +288,29 @@ if 'rolling_beta_spx_vix' in data.columns and 'SPX' in data.columns:
     positive_beta_vix_condition = data['rolling_beta_spx_vix'] > 0
     negative_beta_vix_condition = data['rolling_beta_spx_vix'] <= 0
 
-    # Colorear el fondo en verde cuando la beta SPX/VIX es positiva (inusual)
-    valid_indices_vix = data.index[positive_beta_vix_condition[positive_beta_vix_condition.index.isin(data.index)]]
-    if not valid_indices_vix.empty:
+    y_min_fill_vix = data['SPX'].min() * 0.9
+    y_max_fill_vix = data['SPX'].max() * 1.1
+
+    if positive_beta_vix_condition.any():
         ax2_price_vix.fill_between(
-            valid_indices_vix,
-            data['SPX'].min() * 0.9,
-            data['SPX'].max() * 1.1, # Rellenar un rango amplio
-            where=positive_beta_vix_condition[positive_beta_vix_condition.index.isin(valid_indices_vix)],
+            data.index, y_min_fill_vix, y_max_fill_vix,
+            where=positive_beta_vix_condition,
             color='green',
             alpha=0.25,
+            interpolate=True,
             label='Beta SPX/VIX > 0 (Correlación Positiva)'
         )
 
-    # Colorear el fondo en rojo cuando la beta SPX/VIX es negativa (esperado)
-    valid_indices_vix_neg = data.index[negative_beta_vix_condition[negative_beta_vix_condition.index.isin(data.index)]]
-    if not valid_indices_vix_neg.empty:
+    if negative_beta_vix_condition.any():
         ax2_price_vix.fill_between(
-            valid_indices_vix_neg,
-            data['SPX'].min() * 0.9,
-            data['SPX'].max() * 1.1,
-            where=negative_beta_vix_condition[negative_beta_vix_condition.index.isin(valid_indices_vix_neg)],
+            data.index, y_min_fill_vix, y_max_fill_vix,
+            where=negative_beta_vix_condition,
             color='red',
             alpha=0.25,
+            interpolate=True,
             label='Beta SPX/VIX < 0 (Correlación Negativa)'
         )
+
 
     ax2_price_vix.set_ylabel('Precio del S&P 500 (SPX)', fontsize=10)
     ax2_price_vix.set_xlabel('Fecha', fontsize=10)
@@ -328,14 +326,14 @@ if 'rolling_beta_spx_vix' in data.columns and 'SPX' in data.columns:
     ax2_price_vix.xaxis.set_major_locator(mdates.AutoDateLocator())
     plt.tight_layout(pad=2.0) # Añadir padding entre los gráficos
     st.pyplot(fig2)
+    plt.close(fig2) # Cerrar la figura
 else:
     st.warning("Saltando Gráfico 2: Faltan datos o columnas necesarias (rolling_beta_spx_vix, SPX).")
 
 
 # Gráfico 3: Pendiente de las Betas Móviles
 if 'beta_spx_tnx_slope' in data.columns or 'beta_spx_vix_slope' in data.columns:
-    st.subheader('Pendiente (Velocidad) de las Betas Móviles')
-    plt.style.use('seaborn-v0_8-darkgrid')
+    st.subheader('Pendiente (Velocidad) de las Betas Móviles') # Estilo ya aplicado globalmente
     fig3, ax3 = plt.subplots(figsize=(12, 5))
 
     if 'beta_spx_tnx_slope' in data.columns:
@@ -359,6 +357,7 @@ if 'beta_spx_tnx_slope' in data.columns or 'beta_spx_vix_slope' in data.columns:
 
     plt.tight_layout()
     st.pyplot(fig3)
+    plt.close(fig3) # Cerrar la figura
 else:
     st.warning("Saltando Gráfico 3: No se encontraron columnas de pendiente para graficar.")
 
@@ -394,8 +393,7 @@ if 'spx_returns' in data.columns and 'tnx_changes' in data.columns and 'vix_retu
 
 
         # --- Gráfico de la Correlación Móvil ---
-        plt.style.use('seaborn-v0_8-darkgrid')
-        fig_corr, ax_corr = plt.subplots(figsize=(12, 6))
+        fig_corr, ax_corr = plt.subplots(figsize=(12, 6)) # Estilo ya aplicado globalmente
 
         ax_corr.plot(data.index, data['rolling_corr_beta_tnx_vix'], color='gold', linewidth=1.5, label='Correlación Móvil (Beta SPX/TNX vs Beta SPX/VIX)')
         ax_corr.axhline(0, color='grey', linestyle='--', linewidth=0.7, alpha=0.8) # Línea de correlación cero
@@ -416,6 +414,7 @@ if 'spx_returns' in data.columns and 'tnx_changes' in data.columns and 'vix_retu
 
         plt.tight_layout()
         st.pyplot(fig_corr)
+        plt.close(fig_corr) # Cerrar la figura
 
     else:
         st.warning("Saltando cálculo y gráfico de correlación: Las columnas 'rolling_beta_spx_tnx' o 'rolling_beta_spx_vix' no existen.")
@@ -425,8 +424,7 @@ else:
 
 # Gráfico 4: Precio del SPX y las Betas Móviles SPX/TNX y SPX/VIX
 if 'SPX' in data.columns and ('rolling_beta_spx_tnx' in data.columns or 'rolling_beta_spx_vix' in data.columns):
-    st.subheader('Precio del SPX y Betas Móviles')
-    plt.style.use('seaborn-v0_8-darkgrid')
+    st.subheader('Precio del SPX y Betas Móviles') # Estilo ya aplicado globalmente
     fig4, ax_price_combo = plt.subplots(figsize=(12, 8))
     ax_betas_combo = ax_price_combo.twinx() # Crear un eje y secundario para las betas
 
@@ -461,6 +459,7 @@ if 'SPX' in data.columns and ('rolling_beta_spx_tnx' in data.columns or 'rolling
 
     plt.tight_layout() # Ajustar el diseño para evitar superposiciones
     st.pyplot(fig4)
+    plt.close(fig4) # Cerrar la figura
 
 else:
     st.warning("Saltando Gráfico 4: Faltan datos o columnas necesarias (SPX, rolling_beta_spx_tnx, rolling_beta_spx_vix).")
