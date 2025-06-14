@@ -30,19 +30,33 @@ st.sidebar.header('Configuración de Parámetros')
 tickers = ['^GSPC', '^TNX', '^VIX']
 ticker_names = {'^GSPC': 'SPX', '^TNX': 'TNX', '^VIX': 'VIX'}
 
+# Ventana para el cálculo móvil (rolling) - Cambiado a selectbox para opciones específicas
+rolling_window_options = [13, 39]
+rolling_window = st.sidebar.selectbox('Ventana Móvil (Días)', options=rolling_window_options, index=rolling_window_options.index(39)) # Default a 39
+
 # Rango de fechas configurable
 today = datetime.date.today()
-default_start_date = today - datetime.timedelta(days=365*2) # Default to 2 years ago
 
-start_date = st.sidebar.date_input('Fecha de Inicio', default_start_date)
-end_date = st.sidebar.date_input('Fecha de Fin', today)
+if rolling_window == 39:
+    st.sidebar.markdown("---")
+    st.sidebar.markdown("**Fechas para ventana de 39 días (predeterminado: último año):**")
+    # Specific default dates for 39-day window: last year
+    default_start_val = today - datetime.timedelta(days=365)
+    default_end_val = today
+    start_date = st.sidebar.date_input('Fecha de Inicio', default_start_val, key='date_input_start_39')
+    end_date = st.sidebar.date_input('Fecha de Fin', default_end_val, key='date_input_end_39')
+else:
+    st.sidebar.markdown("---")
+    st.sidebar.markdown(f"**Fechas para ventana de {rolling_window} días (predeterminado: últimos 2 años):**")
+    # General default dates for other windows: last 2 years
+    default_start_val = today - datetime.timedelta(days=365*2)
+    default_end_val = today
+    start_date = st.sidebar.date_input('Fecha de Inicio', default_start_val, key='date_input_start_other')
+    end_date = st.sidebar.date_input('Fecha de Fin', default_end_val, key='date_input_end_other')
 
 # Convertir a string para yfinance
 start_date_str = start_date.strftime('%Y-%m-%d')
 end_date_str = end_date.strftime('%Y-%m-%d')
-
-# Ventana para el cálculo móvil (rolling)
-rolling_window = st.sidebar.slider('Ventana Móvil (Días)', min_value=10, max_value=252, value=39, step=1)
 
 # Botón para iniciar el cálculo (se activa después de seleccionar la media móvil)
 if st.sidebar.button('Calcular'):
