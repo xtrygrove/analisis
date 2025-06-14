@@ -17,11 +17,6 @@ import datetime
 st.set_page_config(layout="wide") # Configurar el layout para usar todo el ancho de la página
 
 st.title('Análisis de Betas Móviles del S&P 500')
-st.write("""
-Esta aplicación descarga datos históricos del S&P 500 (^GSPC), el rendimiento del bono a 10 años (^TNX)
-y el VIX (^VIX) para calcular y visualizar las betas móviles del S&P 500 respecto a ^TNX y ^VIX.
-También se calcula la correlación móvil entre ambas betas y se visualiza la velocidad (pendiente) de las betas.
-""")
 
 # --- Sidebar para Configuración de Parámetros ---
 st.sidebar.header('Configuración de Parámetros')
@@ -30,29 +25,20 @@ st.sidebar.header('Configuración de Parámetros')
 tickers = ['^GSPC', '^TNX', '^VIX']
 ticker_names = {'^GSPC': 'SPX', '^TNX': 'TNX', '^VIX': 'VIX'}
 
-# Ventana para el cálculo móvil (rolling) - Cambiado a selectbox para opciones específicas
-rolling_window_options = [13, 39]
-rolling_window = st.sidebar.selectbox('Ventana Móvil (Días)', options=rolling_window_options, index=rolling_window_options.index(39)) # Default a 39
+# Ventana para el cálculo móvil (rolling) - Fija a 39 días
+rolling_window = 39
+st.sidebar.markdown(f"**Ventana Móvil (Días):** {rolling_window} (fija)")
 
 # Rango de fechas configurable
 today = datetime.date.today()
 
-if rolling_window == 39:
-    st.sidebar.markdown("---")
-    st.sidebar.markdown("**Fechas para ventana de 39 días (predeterminado: último año):**")
-    # Specific default dates for 39-day window: last year
-    default_start_val = today - datetime.timedelta(days=365)
-    default_end_val = today
-    start_date = st.sidebar.date_input('Fecha de Inicio', default_start_val, key='date_input_start_39')
-    end_date = st.sidebar.date_input('Fecha de Fin', default_end_val, key='date_input_end_39')
-else:
-    st.sidebar.markdown("---")
-    st.sidebar.markdown(f"**Fechas para ventana de {rolling_window} días (predeterminado: últimos 2 años):**")
-    # General default dates for other windows: last 2 years
-    default_start_val = today - datetime.timedelta(days=365*2)
-    default_end_val = today
-    start_date = st.sidebar.date_input('Fecha de Inicio', default_start_val, key='date_input_start_other')
-    end_date = st.sidebar.date_input('Fecha de Fin', default_end_val, key='date_input_end_other')
+st.sidebar.markdown("---")
+st.sidebar.markdown("**Rango de Fechas (predeterminado: último año):**")
+# Default dates for 39-day window: last year
+default_start_val = today - datetime.timedelta(days=365)
+default_end_val = today
+start_date = st.sidebar.date_input('Fecha de Inicio', default_start_val, key='date_input_start_39') # Usamos la key existente
+end_date = st.sidebar.date_input('Fecha de Fin', default_end_val, key='date_input_end_39') # Usamos la key existente
 
 # Convertir a string para yfinance
 start_date_str = start_date.strftime('%Y-%m-%d')
@@ -64,7 +50,7 @@ if st.sidebar.button('Calcular'):
 
 
 # --- 2. Descarga de Datos (para todos los tickers) ---
-st.header('Descarga de Datos')
+# st.header('Descarga de Datos') # Eliminado para simplificar la vista
 
 @st.cache_data # Cachear la descarga de datos para evitar descargas repetidas
 def download_data(tickers, start, end):
@@ -87,14 +73,14 @@ def download_data(tickers, start, end):
 if 'calcular' in st.session_state and st.session_state.calcular:
     data, download_error = download_data(tickers, start_date_str, end_date_str)
 if download_error:
-    st.error(download_error)
-    st.stop() # Detiene la ejecución si hay un error de descarga
+        st.error(download_error)
+        st.stop() # Detiene la ejecución si hay un error de descarga
 
-st.write("Datos descargados exitosamente:")
-st.dataframe(data.tail())
+# st.write("Datos descargados exitosamente:") # Eliminado para simplificar la vista
+# st.dataframe(data.tail()) # Eliminado para simplificar la vista
 
 # --- 3. Cálculo de Retornos y Cambios (para SPX, TNX y VIX) ---
-st.header('Cálculos Derivados')
+# st.header('Cálculos Derivados') # Eliminado para simplificar la vista
 
 # Verificar si los datos se descargaron correctamente antes de continuar
 if not data.empty:
@@ -201,7 +187,7 @@ else:
     st.info("Ninguna columna de pendiente calculada para eliminar NaNs.")
 
 # --- 6. Gráficos ---
-st.header('Visualizaciones')
+# st.header('Visualizaciones') # Eliminado, cada gráfico tendrá su subheader
 
 # Gráfico 1: Beta SPX vs TNX y Precio del SPX con Regímenes de Beta
 if 'rolling_beta_spx_tnx' in data.columns and 'SPX' in data.columns:
@@ -218,7 +204,7 @@ if 'rolling_beta_spx_tnx' in data.columns and 'SPX' in data.columns:
     # --- Gráfico Superior (Beta SPX/TNX) ---
     ax1_beta_tnx.plot(data.index, data['rolling_beta_spx_tnx'], color='magenta', linewidth=1.5)
     ax1_beta_tnx.axhline(0, color='grey', linestyle='--', linewidth=0.7, alpha=0.8)
-    ax1_beta_tnx.set_title(f'Beta Móvil ({rolling_window} Días) del S&P 500 vs Rendimiento del Bono a 10 Años', fontsize=14)
+    ax1_beta_tnx.set_title(f'Beta Móvil (39 Días) del S&P 500 vs Rendimiento del Bono a 10 Años', fontsize=14)
     ax1_beta_tnx.set_ylabel('Beta Móvil SPX/TNX', fontsize=10)
     ax1_beta_tnx.grid(True, which='both', linestyle='--', linewidth=0.5, alpha=0.7)
 
@@ -289,7 +275,7 @@ if 'rolling_beta_spx_vix' in data.columns and 'SPX' in data.columns:
     # --- Gráfico Superior (Beta SPX/VIX) ---
     ax1_beta_vix.plot(data.index, data['rolling_beta_spx_vix'], color='cyan', linewidth=1.5)
     ax1_beta_vix.axhline(0, color='grey', linestyle='--', linewidth=0.7, alpha=0.8)
-    ax1_beta_vix.set_title(f'Beta Móvil ({rolling_window} Días) del S&P 500 vs VIX', fontsize=14)
+    ax1_beta_vix.set_title(f'Beta Móvil (39 Días) del S&P 500 vs VIX', fontsize=14)
     ax1_beta_vix.set_ylabel('Beta Móvil SPX/VIX', fontsize=10)
     ax1_beta_vix.grid(True, which='both', linestyle='--', linewidth=0.5, alpha=0.7)
 
@@ -394,8 +380,8 @@ if 'spx_returns' in data.columns and 'tnx_changes' in data.columns and 'vix_retu
     # que la intención sea analizar la relación entre las Betas calculadas.
 
     # Vamos a calcular la correlación móvil entre las columnas de beta si existen.
-    if 'rolling_beta_spx_tnx' in data.columns and 'rolling_beta_spx_vix' in data.columns:
-        st.subheader(f'Correlación Móvil ({rolling_window} Días) entre Beta SPX/TNX y Beta SPX/VIX')
+    if 'rolling_beta_spx_tnx' in data.columns and 'rolling_beta_spx_vix' in data.columns: # rolling_window es 39
+        st.subheader(f'Correlación Móvil (39 Días) entre Beta SPX/TNX y Beta SPX/VIX')
 
         # Calcular la correlación móvil de Pearson entre las dos columnas de beta
         rolling_correlation_betas = data['rolling_beta_spx_tnx'].rolling(window=rolling_window).corr(data['rolling_beta_spx_vix'])
@@ -417,7 +403,7 @@ if 'spx_returns' in data.columns and 'tnx_changes' in data.columns and 'vix_retu
         ax_corr.axhline(-0.5, color='grey', linestyle=':', linewidth=0.7, alpha=0.6) # Línea de correlación moderada negativa
 
 
-        ax_corr.set_title(f'Correlación Móvil ({rolling_window} Días) entre Beta SPX/TNX y Beta SPX/VIX', fontsize=14)
+        ax_corr.set_title(f'Correlación Móvil (39 Días) entre Beta SPX/TNX y Beta SPX/VIX', fontsize=14)
         ax_corr.set_xlabel('Fecha', fontsize=10)
         ax_corr.set_ylabel('Coeficiente de Correlación', fontsize=10)
         ax_corr.legend()
@@ -455,10 +441,10 @@ if 'SPX' in data.columns and ('rolling_beta_spx_tnx' in data.columns or 'rolling
     # --- Gráfico de las Betas en el Eje Secundario ---
     beta_lines = []
     if 'rolling_beta_spx_tnx' in data.columns:
-        line1, = ax_betas_combo.plot(data.index, data['rolling_beta_spx_tnx'], color='magenta', linestyle='--', linewidth=1.5, label=f'Beta SPX/TNX ({rolling_window} Días)')
+        line1, = ax_betas_combo.plot(data.index, data['rolling_beta_spx_tnx'], color='magenta', linestyle='--', linewidth=1.5, label='Beta SPX/TNX (39 Días)')
         beta_lines.append(line1)
     if 'rolling_beta_spx_vix' in data.columns:
-        line2, = ax_betas_combo.plot(data.index, data['rolling_beta_spx_vix'], color='cyan', linestyle='--', linewidth=1.5, label=f'Beta SPX/VIX ({rolling_window} Días)')
+        line2, = ax_betas_combo.plot(data.index, data['rolling_beta_spx_vix'], color='cyan', linestyle='--', linewidth=1.5, label='Beta SPX/VIX (39 Días)')
         beta_lines.append(line2)
 
     ax_betas_combo.set_ylabel('Beta Móvil', fontsize=10, color='grey')
@@ -479,5 +465,5 @@ if 'SPX' in data.columns and ('rolling_beta_spx_tnx' in data.columns or 'rolling
 else:
     st.warning("Saltando Gráfico 4: Faltan datos o columnas necesarias (SPX, rolling_beta_spx_tnx, rolling_beta_spx_vix).")
 
-st.write("---")
-st.write("Desarrollado con Streamlit, yfinance, pandas y matplotlib.")
+# st.write("---") # Eliminado para simplificar la vista
+# st.write("Desarrollado con Streamlit, yfinance, pandas y matplotlib.") # Eliminado para simplificar la vista
