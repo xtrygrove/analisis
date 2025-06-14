@@ -202,8 +202,8 @@ def plot_beta_spx_tnx_and_price(data_df, window_val):
         *   El gráfico inferior muestra el precio del SPX. El fondo se colorea de verde cuando la beta SPX/TNX es positiva (SPX y TNX se mueven juntos) y de rojo cuando es negativa (SPX y TNX se mueven en oposición). Esto ayuda a visualizar cómo se comporta el mercado de acciones en diferentes regímenes de correlación con los tipos de interés.
         """)
 
-else:
-    st.warning("Saltando Gráfico 1: Faltan datos o columnas necesarias (rolling_beta_spx_tnx, SPX).")
+    else:
+        st.warning("Saltando Gráfico 1: Faltan datos o columnas necesarias (rolling_beta_spx_tnx, SPX).")
 
 
 def plot_beta_spx_vix(data_df, window_val):
