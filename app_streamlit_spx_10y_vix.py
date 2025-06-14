@@ -287,23 +287,10 @@ if 'rolling_beta_spx_vix' in data.columns and 'SPX' in data.columns:
     y_min_fill_vix = data['SPX'].min() * 0.9
     y_max_fill_vix = data['SPX'].max() * 1.1
 
-    # if negative_beta_vix_condition.any():
-    #     # Solo mostrar el régimen de beta negativa (rojo) - Eliminado según solicitud
-    #     ax2_price_vix.fill_between(
-    #         data.index, y_min_fill_vix, y_max_fill_vix,
-    #         where=negative_beta_vix_condition,
-    #         color='red',
-    #         alpha=0.25,
-    #         interpolate=True,
-    #         label='Beta SPX/VIX < 0 (Correlación Negativa)'
-    #     )
-
     ax2_price_vix.set_ylabel('Precio del S&P 500 (SPX)', fontsize=10)
     ax2_price_vix.set_xlabel('Fecha', fontsize=10)
     ax2_price_vix.grid(True, which='both', linestyle='--', linewidth=0.5, alpha=0.7)
     ax2_price_vix.legend(loc='upper left')
-    # Ajustar los límites del eje Y del precio (opcional)
-    # ax2_price_vix.set_ylim(bottom=data['SPX'].min()*0.95, top=data['SPX'].max()*1.05)
 
 
     # --- Finalización y Muestra del Gráfico 2 ---
@@ -316,7 +303,7 @@ if 'rolling_beta_spx_vix' in data.columns and 'SPX' in data.columns:
     st.markdown("""
     **Interpretación del Gráfico 2:**
     *   El gráfico superior muestra la beta móvil de 39 días del S&P 500 (SPX) con respecto al VIX (índice de volatilidad). Históricamente, esta beta tiende a ser negativa (línea cian bajo cero), indicando que el SPX tiende a moverse en dirección opuesta al VIX (cuando el VIX sube, el SPX tiende a bajar, y viceversa).
-    *   El gráfico inferior muestra el precio del SPX. Anteriormente, se coloreaba el fondo para indicar regímenes de beta positiva o negativa. Actualmente, no se muestra sombreado para este gráfico.
+    *   El gráfico inferior muestra el precio del SPX. 
     """)
 
 else:
@@ -475,5 +462,5 @@ if 'SPX' in data.columns and ('rolling_beta_spx_tnx' in data.columns or 'rolling
 else:
     st.warning("Saltando Gráfico 4: Faltan datos o columnas necesarias (SPX, rolling_beta_spx_tnx, rolling_beta_spx_vix).")
 
-# st.write("---") # Eliminado para simplificar la vista
-# st.write("Desarrollado con Streamlit, yfinance, pandas y matplotlib.") # Eliminado para simplificar la vista
+st.write("---")
+st.write("Desarrollado con Streamlit, yfinance, pandas y matplotlib.")
