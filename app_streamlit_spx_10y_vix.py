@@ -281,16 +281,16 @@ if 'rolling_beta_spx_vix' in data.columns and 'SPX' in data.columns:
     y_min_fill_vix = data['SPX'].min() * 0.9
     y_max_fill_vix = data['SPX'].max() * 1.1
 
-    if negative_beta_vix_condition.any():
-        # Solo mostrar el régimen de beta negativa (rojo)
-        ax2_price_vix.fill_between(
-            data.index, y_min_fill_vix, y_max_fill_vix,
-            where=negative_beta_vix_condition,
-            color='red',
-            alpha=0.25,
-            interpolate=True,
-            label='Beta SPX/VIX < 0 (Correlación Negativa)'
-        )
+    # if negative_beta_vix_condition.any():
+    #     # Solo mostrar el régimen de beta negativa (rojo) - Eliminado según solicitud
+    #     ax2_price_vix.fill_between(
+    #         data.index, y_min_fill_vix, y_max_fill_vix,
+    #         where=negative_beta_vix_condition,
+    #         color='red',
+    #         alpha=0.25,
+    #         interpolate=True,
+    #         label='Beta SPX/VIX < 0 (Correlación Negativa)'
+    #     )
 
     ax2_price_vix.set_ylabel('Precio del S&P 500 (SPX)', fontsize=10)
     ax2_price_vix.set_xlabel('Fecha', fontsize=10)
