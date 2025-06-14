@@ -247,6 +247,12 @@ if 'rolling_beta_spx_tnx' in data.columns and 'SPX' in data.columns:
     plt.tight_layout(pad=2.0) # Añadir padding entre los gráficos
     st.pyplot(fig1)
     plt.close(fig1) # Cerrar la figura para liberar memoria
+    st.markdown("""
+    **Interpretación del Gráfico 1:**
+    *   El gráfico superior muestra la beta móvil de 39 días del S&P 500 (SPX) con respecto al rendimiento del bono del Tesoro a 10 años (TNX). Una beta positiva (línea magenta sobre cero) sugiere que el SPX tiende a moverse en la misma dirección que los rendimientos de los bonos. Una beta negativa sugiere un movimiento en direcciones opuestas.
+    *   El gráfico inferior muestra el precio del SPX. El fondo se colorea de verde cuando la beta SPX/TNX es positiva (SPX y TNX se mueven juntos) y de rojo cuando es negativa (SPX y TNX se mueven en oposición). Esto ayuda a visualizar cómo se comporta el mercado de acciones en diferentes regímenes de correlación con los tipos de interés.
+    """)
+
 else:
     st.warning("Saltando Gráfico 1: Faltan datos o columnas necesarias (rolling_beta_spx_tnx, SPX).")
 
@@ -307,6 +313,12 @@ if 'rolling_beta_spx_vix' in data.columns and 'SPX' in data.columns:
     plt.tight_layout(pad=2.0) # Añadir padding entre los gráficos
     st.pyplot(fig2)
     plt.close(fig2) # Cerrar la figura
+    st.markdown("""
+    **Interpretación del Gráfico 2:**
+    *   El gráfico superior muestra la beta móvil de 39 días del S&P 500 (SPX) con respecto al VIX (índice de volatilidad). Históricamente, esta beta tiende a ser negativa (línea cian bajo cero), indicando que el SPX tiende a moverse en dirección opuesta al VIX (cuando el VIX sube, el SPX tiende a bajar, y viceversa).
+    *   El gráfico inferior muestra el precio del SPX. Anteriormente, se coloreaba el fondo para indicar regímenes de beta positiva o negativa. Actualmente, no se muestra sombreado para este gráfico.
+    """)
+
 else:
     st.warning("Saltando Gráfico 2: Faltan datos o columnas necesarias (rolling_beta_spx_vix, SPX).")
 
@@ -338,6 +350,12 @@ if 'beta_spx_tnx_slope' in data.columns or 'beta_spx_vix_slope' in data.columns:
     plt.tight_layout()
     st.pyplot(fig3)
     plt.close(fig3) # Cerrar la figura
+    st.markdown("""
+    **Interpretación del Gráfico 3:**
+    *   Este gráfico muestra la pendiente (o "velocidad") de las betas móviles calculadas anteriormente (Beta SPX/TNX y Beta SPX/VIX).
+    *   Una pendiente positiva indica que la sensibilidad del SPX (su beta) a los cambios en TNX o VIX está aumentando.
+    *   Una pendiente negativa indica que la sensibilidad está disminuyendo. Valores cercanos a cero sugieren que la beta es relativamente estable.
+    """)
 else:
     st.warning("Saltando Gráfico 3: No se encontraron columnas de pendiente para graficar.")
 
@@ -395,6 +413,12 @@ if 'spx_returns' in data.columns and 'tnx_changes' in data.columns and 'vix_retu
         plt.tight_layout()
         st.pyplot(fig_corr)
         plt.close(fig_corr) # Cerrar la figura
+        st.markdown("""
+        **Interpretación del Gráfico de Correlación Móvil entre Betas:**
+        *   Este gráfico muestra la correlación móvil de 39 días entre la Beta SPX/TNX y la Beta SPX/VIX.
+        *   Una correlación positiva (cercana a 1) indica que las dos betas tienden a moverse en la misma dirección; es decir, la sensibilidad del SPX al TNX y al VIX cambian de forma similar.
+        *   Una correlación negativa (cercana a -1) indica que las betas tienden a moverse en direcciones opuestas. Una correlación cercana a 0 sugiere poca relación lineal entre los cambios de las dos betas.
+        """)
 
     else:
         st.warning("Saltando cálculo y gráfico de correlación: Las columnas 'rolling_beta_spx_tnx' o 'rolling_beta_spx_vix' no existen.")
@@ -440,6 +464,13 @@ if 'SPX' in data.columns and ('rolling_beta_spx_tnx' in data.columns or 'rolling
     plt.tight_layout() # Ajustar el diseño para evitar superposiciones
     st.pyplot(fig4)
     plt.close(fig4) # Cerrar la figura
+    st.markdown("""
+    **Interpretación del Gráfico 5 (Precio SPX y Betas Móviles):**
+    *   Este gráfico combina la visualización del precio del S&P 500 (SPX, eje izquierdo, línea azul) con las dos betas móviles (Beta SPX/TNX en magenta y Beta SPX/VIX en cian, eje derecho).
+    *   Permite observar directamente cómo evoluciona el precio del SPX mientras cambian sus sensibilidades (betas) al rendimiento de los bonos (TNX) y a la volatilidad (VIX).
+    *   La línea de puntos horizontal en el eje de las betas marca el nivel cero, ayudando a identificar rápidamente si la sensibilidad es positiva o negativa.
+    """)
+
 
 else:
     st.warning("Saltando Gráfico 4: Faltan datos o columnas necesarias (SPX, rolling_beta_spx_tnx, rolling_beta_spx_vix).")
