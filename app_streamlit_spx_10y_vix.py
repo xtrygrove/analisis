@@ -30,13 +30,13 @@ ticker_names = {'^GSPC': 'SPX', '^TNX': 'TNX', '^VIX': 'VIX'}
 rolling_window = 39
 
 # Rango de fechas - Fijo al último año
-today = datetime.date.today()
-start_date = today - datetime.timedelta(days=365)
-end_date = today
+# today = datetime.date.today()
+# start_date = today - datetime.timedelta(days=365)
+# end_date = today
 
 # Convertir a string para yfinance
-start_date_str = start_date.strftime('%Y-%m-%d')
-end_date_str = end_date.strftime('%Y-%m-%d')
+# start_date_str = start_date.strftime('%Y-%m-%d')
+# end_date_str = end_date.strftime('%Y-%m-%d')
 
 # No hay botón "Calcular", los cálculos se ejecutan directamente.
 # Inicializar 'data' como un DataFrame vacío para evitar errores si la descarga falla
@@ -49,7 +49,7 @@ data = pd.DataFrame()
 def download_data(tickers, start, end):
     try:
         # Descargar los datos de precios de cierre ajustados para todos los tickers
-        data = yf.download(tickers, start=start, end=end)['Close']
+        data = yf.download(tickers,  period= '1y', interval='1d')['Close']
         data.rename(columns=ticker_names, inplace=True)
 
         if data.empty:
