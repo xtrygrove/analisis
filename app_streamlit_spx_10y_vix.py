@@ -55,7 +55,7 @@ def download_data(tickers, period, interval):
         return None, f"Ocurrió un error al descargar los datos: {e}" # Retorna None y el mensaje de error
 
 # Descargar datos (se ejecuta siempre al cargar/refrescar la app)
-data, download_error = download_data(tickers, start_date_str, end_date_str)
+data, download_error = download_data(tickers, period, interval)
 if download_error:
     st.error(download_error)
     st.stop() # Detiene la ejecución si hay un error de descarga
