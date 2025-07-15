@@ -29,6 +29,15 @@ ticker_names = {'^GSPC': 'SPX', '^TNX': 'TNX', '^VIX': 'VIX'}
 # Ventana para el cálculo móvil (rolling) - Fija a 39 días
 rolling_window = 39
 
+# Rango de fechas - Fijo al último año
+today = datetime.date.today()
+start_date = today - datetime.timedelta(days=365)
+end_date = today
+
+# Convertir a string para yfinance
+start_date_str = start_date.strftime('%Y-%m-%d')
+end_date_str = end_date.strftime('%Y-%m-%d')
+
 # No hay botón "Calcular", los cálculos se ejecutan directamente.
 # Inicializar 'data' como un DataFrame vacío para evitar errores si la descarga falla
 data = pd.DataFrame()
@@ -37,10 +46,10 @@ data = pd.DataFrame()
 # st.header('Descarga de Datos') # Eliminado para simplificar la vista
 
 @st.cache_data # Cachear la descarga de datos para evitar descargas repetidas
-def download_data(tickers, period, interval):
+def download_data(tickers, start, end):
     try:
         # Descargar los datos de precios de cierre ajustados para todos los tickers
-        data = yf.download(tickers,  period= '1y', interval='1d')['Close']
+        data = yf.download(tickers, start=start, end=end)['Close']
         data.rename(columns=ticker_names, inplace=True)
 
         if data.empty:
@@ -55,7 +64,7 @@ def download_data(tickers, period, interval):
         return None, f"Ocurrió un error al descargar los datos: {e}" # Retorna None y el mensaje de error
 
 # Descargar datos (se ejecuta siempre al cargar/refrescar la app)
-data, download_error = download_data(tickers, period, interval)
+data, download_error = download_data(tickers, start_date_str, end_date_str)
 if download_error:
     st.error(download_error)
     st.stop() # Detiene la ejecución si hay un error de descarga
