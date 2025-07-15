@@ -27,7 +27,7 @@ tickers = ['^GSPC', '^TNX', '^VIX']
 ticker_names = {'^GSPC': 'SPX', '^TNX': 'TNX', '^VIX': 'VIX'}
 
 # Ventana para el cálculo móvil (rolling) - Fija a 39 días
-rolling_window = 13
+rolling_window = 39
 
 # Rango de fechas - Fijo al último año
 today = datetime.date.today()
