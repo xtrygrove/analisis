@@ -93,10 +93,10 @@ else:
 # Verificar si los datos están listos para los cálculos de beta
 if 'spx_returns' in data.columns and 'tnx_changes' in data.columns:
     # Calcular la covarianza móvil entre los retornos del SPX y los cambios en el rendimiento del bono
-    rolling_cov_spx_tnx = data['spx_returns'].rolling(window=rolling_window).cov(data['tnx_changes'])
+    rolling_cov_spx_tnx = data['spx_returns'].rolling(window=rolling_window_beta).cov(data['tnx_changes'])
 
     # Calcular la varianza móvil de los cambios en el rendimiento del bono
-    rolling_var_tnx = data['tnx_changes'].rolling(window=rolling_window).var()
+    rolling_var_tnx = data['tnx_changes'].rolling(window=rolling_window_beta).var()
 
     # Calcular la beta móvil SPX/TNX
     # Evitar división por cero si la varianza es 0 o NaN (cuando no hay suficientes datos)
@@ -107,10 +107,10 @@ else:
 
 if 'spx_returns' in data.columns and 'vix_returns' in data.columns:
      # Calcular la covarianza móvil entre los retornos del SPX y los retornos del VIX
-    rolling_cov_spx_vix = data['spx_returns'].rolling(window=rolling_window).cov(data['vix_returns'])
+    rolling_cov_spx_vix = data['spx_returns'].rolling(window=rolling_window_beta).cov(data['vix_returns'])
 
     # Calcular la varianza móvil de los retornos del VIX
-    rolling_var_vix = data['vix_returns'].rolling(window=rolling_window).var()
+    rolling_var_vix = data['vix_returns'].rolling(window=rolling_window_beta).var()
 
     # Calcular la beta móvil SPX/VIX
     # Evitar división por cero si la varianza es 0 o NaN
@@ -118,7 +118,7 @@ if 'spx_returns' in data.columns and 'vix_returns' in data.columns:
 else:
     st.warning("Saltando cálculo de beta móvil SPX/VIX debido a la falta de datos o columnas necesarias.")
 
-# Eliminar filas con valores NaN resultantes de los cálculos móviles (las primeras 'rolling_window' - 1 filas)
+# Eliminar filas con valores NaN resultantes de los cálculos móviles (las primeras 'rolling_window_beta' - 1 filas)
 # Solo hacemos dropna si las columnas existen
 cols_to_check_beta = []
 if 'rolling_beta_spx_tnx' in data.columns:
