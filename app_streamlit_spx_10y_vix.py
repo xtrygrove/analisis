@@ -210,261 +210,63 @@ if 'rolling_beta_spx_tnx' in data.columns and 'SPX' in data.columns:
 else:
     print("Saltando Gráfico 1: Faltan datos o columnas necesarias (rolling_beta_spx_tnx, SPX).")
 
-# # Gráfico 1: Beta SPX vs TNX y Precio del SPX con Regímenes de Beta
-# if 'rolling_beta_spx_tnx' in data.columns and 'SPX' in data.columns:
-#     st.subheader('Beta SPX/TNX y Precio del SPX')
 
-#     fig1, (ax1_beta_tnx, ax2_price_tnx) = plt.subplots(
-#         2, 1,
-#         figsize=(12, 8),
-#         sharex=True, # Sincronizar el eje de fechas
-#         gridspec_kw={'height_ratios': [1, 2]} # Dar más espacio al gráfico de precios
-#     )
+plt.style.use('dark_background')
 
-#     # --- Gráfico Superior (Beta SPX/TNX) ---
-#     ax1_beta_tnx.plot(data.index, data['rolling_beta_spx_tnx'], color='blue', linewidth=1.5)
-#     ax1_beta_tnx.axhline(0, color='grey', linestyle='--', linewidth=0.7, alpha=0.8)
-#     ax1_beta_tnx.set_title(f'Beta Móvil {rolling_window_beta}) del S&P 500 vs Rendimiento del Bono a 10 Años', fontsize=14)
-#     ax1_beta_tnx.set_ylabel('Beta Móvil SPX/TNX', fontsize=10)
-#     ax1_beta_tnx.grid(True, which='both', linestyle='--', linewidth=0.5, alpha=0.7)
+# Gráfico 1: Beta SPX vs TNX y Precio del SPX con Regímenes de Beta
+if 'rolling_beta_spx_tnx' in data.columns and 'SPX' in data.columns:
+    st.subheader("Gráfico 1: Beta SPX vs TNX y Precio del SPX")
+    fig1, (ax1, ax2) = plt.subplots(2, 1, figsize=(15, 10), sharex=True, gridspec_kw={'height_ratios': [1, 2]})
 
+    ax1.plot(data.index, data['rolling_beta_spx_tnx'], color='magenta', linewidth=1.5)
+    ax1.axhline(0, color='white', linestyle='--', linewidth=0.7, alpha=0.8)
+    ax1.set_title('Beta Móvil del S&P 500 vs Rendimiento del Bono a 10 Años', fontsize=16)
+    ax1.set_ylabel('Beta Móvil SPX/TNX', fontsize=12)
+    ax1.grid(True, linestyle='--', linewidth=0.5, alpha=0.7)
 
-#     # --- Gráfico Inferior (Precio del SPX con Regímenes de Beta SPX/TNX) ---
-#     ax2_price_tnx.plot(data.index, data['SPX'], color='steelblue', linewidth=1.5, label='Precio S&P 500')
+    ax2.plot(data.index, data['SPX'], color='white', linewidth=1.5, label='Precio S&P 500')
+    pos_cond = data['rolling_beta_spx_tnx'] > 0
+    neg_cond = data['rolling_beta_spx_tnx'] <= 0
+    min_y, max_y = data['SPX'].min(), data['SPX'].max()
+    ax2.fill_between(data.index, min_y*0.95, max_y*1.05, where=pos_cond, color='red', alpha=0.25, label='Beta > 0')
+    ax2.fill_between(data.index, min_y*0.95, max_y*1.05, where=neg_cond, color='green', alpha=0.25, label='Beta < 0')
+    ax2.set_ylabel('Precio del S&P 500 (SPX)', fontsize=12)
+    ax2.set_xlabel('Fecha', fontsize=12)
+    ax2.grid(True, linestyle='--', linewidth=0.5, alpha=0.7)
+    ax2.legend(loc='upper left')
+    fig1.autofmt_xdate()
+    ax2.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d'))
+    ax2.xaxis.set_major_locator(mdates.AutoDateLocator())
+    st.pyplot(fig1)
 
-#     # Definir las condiciones para colorear el fondo según la beta SPX/TNX
-#     positive_beta_tnx_condition = data['rolling_beta_spx_tnx'] > 0
-#     negative_beta_tnx_condition = data['rolling_beta_spx_tnx'] <= 0
-
-#     # Colorear el fondo según la beta SPX/TNX
-#     y_min_fill_tnx = data['SPX'].min() * 0.9
-#     y_max_fill_tnx = data['SPX'].max() * 1.1
-
-#     if positive_beta_tnx_condition.any():
-#          ax2_price_tnx.fill_between(
-#             data.index, y_min_fill_tnx, y_max_fill_tnx,
-#             where=positive_beta_tnx_condition,
-#             color='green',
-#             alpha=0.25,
-#             interpolate=True,
-#             label='Beta SPX/TNX > 0 (Correlación Positiva)'
-#         )
-
-#     if negative_beta_tnx_condition.any():
-#         ax2_price_tnx.fill_between(
-#             data.index, y_min_fill_tnx, y_max_fill_tnx,
-#             where=negative_beta_tnx_condition,
-#             color='red',
-#             alpha=0.25,
-#             interpolate=True,
-#             label='Beta SPX/TNX < 0 (Correlación Negativa)'
-#         )
-
-
-#     ax2_price_tnx.set_ylabel('Precio del S&P 500 (SPX)', fontsize=10)
-#     ax2_price_tnx.set_xlabel('Fecha', fontsize=10)
-#     ax2_price_tnx.grid(True, which='both', linestyle='--', linewidth=0.5, alpha=0.7)
-#     ax2_price_tnx.legend(loc='upper left')
-
-#     # --- Finalización y Muestra del Gráfico 1 ---
-#     fig1.autofmt_xdate()
-#     ax2_price_tnx.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d'))
-#     ax2_price_tnx.xaxis.set_major_locator(mdates.AutoDateLocator())
-#     plt.tight_layout(pad=2.0) # Añadir padding entre los gráficos
-#     st.pyplot(fig1)
-#     plt.close(fig1) # Cerrar la figura para liberar memoria
-#     st.markdown("""
-#     **Interpretación del Gráfico 1:**
-#     *   El gráfico superior muestra la beta móvil del S&P 500 (SPX) con respecto al rendimiento del bono del Tesoro a 10 años (TNX). Una beta positiva (línea magenta sobre cero) sugiere que el SPX tiende a moverse en la misma dirección que los rendimientos de los bonos. Una beta negativa sugiere un movimiento en direcciones opuestas.
-#     *   El gráfico inferior muestra el precio del SPX. El fondo se colorea de verde cuando la beta SPX/TNX es positiva (SPX y TNX se mueven juntos) y de rojo cuando es negativa (SPX y TNX se mueven en oposición). Esto ayuda a visualizar cómo se comporta el mercado de acciones en diferentes regímenes de correlación con los tipos de interés.
-#     """)
-
-# else:
-#     st.warning("Saltando Gráfico 1: Faltan datos o columnas necesarias (rolling_beta_spx_tnx, SPX).")
-
-
-# Gráfico 2: Beta SPX vs VIX y Precio del SPX con Regímenes de Beta
-if 'rolling_beta_spx_vix' in data.columns and 'SPX' in data.columns:
-    st.subheader('Beta SPX/VIX y Precio del SPX') # Estilo ya aplicado globalmente
-
-    # Modificado para mostrar solo un gráfico: Beta SPX/VIX
-    fig2, ax1_beta_vix = plt.subplots(figsize=(12, 5))
-
-    # --- Gráfico Superior (Beta SPX/VIX) ---
-    ax1_beta_vix.plot(data.index, data['rolling_beta_spx_vix'], color='cyan', linewidth=1.5)
-    ax1_beta_vix.axhline(0, color='grey', linestyle='--', linewidth=0.7, alpha=0.8)
-    ax1_beta_vix.set_title(f'Beta Móvil {rolling_window_beta} del S&P 500 vs VIX', fontsize=14)
-    ax1_beta_vix.set_ylabel('Beta Móvil SPX/VIX', fontsize=10)
-    ax1_beta_vix.set_xlabel('Fecha', fontsize=10) # Añadir etiqueta X ya que es el único gráfico
-    ax1_beta_vix.grid(True, which='both', linestyle='--', linewidth=0.5, alpha=0.7)
-
-    # --- Finalización y Muestra del Gráfico 2 ---
-    fig2.autofmt_xdate()
-    ax1_beta_vix.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d'))
-    ax1_beta_vix.xaxis.set_major_locator(mdates.AutoDateLocator())
-    plt.tight_layout(pad=2.0) # Añadir padding entre los gráficos
+# Gráfico 2: Beta SPX vs VIX
+if 'rolling_beta_spx_vix' in data.columns:
+    st.subheader("Gráfico 2: Beta SPX vs VIX")
+    fig2, ax = plt.subplots(figsize=(15, 5))
+    ax.plot(data.index, data['rolling_beta_spx_vix'], color='cyan', linewidth=1.5)
+    ax.axhline(0, color='white', linestyle='--', linewidth=0.7, alpha=0.8)
+    ax.set_title('Beta Móvil del S&P 500 vs VIX', fontsize=16)
+    ax.set_ylabel('Beta Móvil SPX/VIX', fontsize=12)
+    ax.grid(True, linestyle='--', linewidth=0.5, alpha=0.7)
     st.pyplot(fig2)
-    plt.close(fig2) # Cerrar la figura
-    st.markdown("""
-    **Interpretación del Gráfico 2:**
-    *   Este gráfico muestra la beta móvil del S&P 500 (SPX) con respecto al VIX (índice de volatilidad). Históricamente, esta beta tiende a ser negativa (línea cian bajo cero), indicando que el SPX tiende a moverse en dirección opuesta al VIX (cuando el VIX sube, el SPX tiende a bajar, y viceversa).
-    """)
-
-else:
-    st.warning("Saltando Gráfico 2: Faltan datos o columnas necesarias (rolling_beta_spx_vix, SPX).")
-
 
 # Gráfico 3: Pendiente de las Betas Móviles
 if 'beta_spx_tnx_slope' in data.columns or 'beta_spx_vix_slope' in data.columns:
-    st.subheader('Pendiente (Velocidad) de las Betas Móviles') # Estilo ya aplicado globalmente
-    fig3, ax3 = plt.subplots(figsize=(12, 5))
-
+    st.subheader("Gráfico 3: Pendiente de las Betas Móviles")
+    fig3, ax = plt.subplots(figsize=(15, 5))
     if 'beta_spx_tnx_slope' in data.columns:
-        ax3.plot(data.index, data['beta_spx_tnx_slope'], label='Pendiente Beta SPX/TNX', color='magenta', linewidth=1.5)
-
+        ax.plot(data.index, data['beta_spx_tnx_slope'], label='Pendiente Beta SPX/TNX', color='magenta')
     if 'beta_spx_vix_slope' in data.columns:
-        ax3.plot(data.index, data['beta_spx_vix_slope'], label='Pendiente Beta SPX/VIX', color='cyan', linewidth=1.5)
-
-    ax3.set_title('Pendiente (Velocidad) de las Betas Móviles', fontsize=14)
-    ax3.set_xlabel('Fecha', fontsize=10)
-    ax3.set_ylabel('Cambio Diario en Beta', fontsize=10)
-    ax3.legend()
-    ax3.grid(True, which='both', linestyle='--', linewidth=0.5, alpha=0.7)
-    ax3.axhline(0, color='grey', linestyle='--', linewidth=0.7, alpha=0.8)
-
-
-    # Formato de fechas para el eje X
+        ax.plot(data.index, data['beta_spx_vix_slope'], label='Pendiente Beta SPX/VIX', color='cyan')
+    ax.set_title('Pendiente de las Betas Móviles', fontsize=16)
+    ax.set_xlabel('Fecha')
+    ax.set_ylabel('Cambio Diario en Beta')
+    ax.legend()
+    ax.grid(True, linestyle='--', linewidth=0.5, alpha=0.7)
+    ax.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d'))
+    ax.xaxis.set_major_locator(mdates.AutoDateLocator())
     fig3.autofmt_xdate()
-    ax3.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d'))
-    ax3.xaxis.set_major_locator(mdates.AutoDateLocator())
-
-    plt.tight_layout()
     st.pyplot(fig3)
-    plt.close(fig3) # Cerrar la figura
-    st.markdown("""
-    **Interpretación del Gráfico 3:**
-    *   Este gráfico muestra la pendiente (o "velocidad") de las betas móviles calculadas anteriormente (Beta SPX/TNX y Beta SPX/VIX).
-    *   Una pendiente positiva indica que la sensibilidad del SPX (su beta) a los cambios en TNX o VIX está aumentando.
-    *   Una pendiente negativa indica que la sensibilidad está disminuyendo. Valores cercanos a cero sugieren que la beta es relativamente estable.
-    """)
-else:
-    st.warning("Saltando Gráfico 3: No se encontraron columnas de pendiente para graficar.")
-
-
-# --- Cálculo y Gráfico de la Correlación Móvil ---
-
-# Verificar si las columnas necesarias existen para el cálculo de la correlación
-if 'spx_returns' in data.columns and 'tnx_changes' in data.columns and 'vix_returns' in data.columns:
-    # Calcular la correlación móvil entre los retornos de SPX/TNX y los retornos de SPX/VIX
-    # Para calcular la correlación entre SPX/TNX y SPX/VIX, primero debemos calcular
-    # los retornos de SPX/TNX y SPX/VIX. Dado que no tenemos esos ratios directos
-    # y hemos calculado la beta que es una medida de sensibilidad, interpretaremos
-    # la solicitud como la correlación entre la beta SPX/TNX y la beta SPX/VIX,
-    # ya que la beta se deriva de las relaciones entre los retornos/cambios de estos activos.
-
-    # Si lo que se busca es la correlación entre *retornos* del ratio SPX/TNX y SPX/VIX,
-    # necesitaríamos calcular primero esos ratios, luego sus retornos, y finalmente la correlación móvil.
-    # Basándonos en el código existente que calcula las Betas, parece más plausible
-    # que la intención sea analizar la relación entre las Betas calculadas.
-
-    # Vamos a calcular la correlación móvil entre las columnas de beta si existen.
-    if 'rolling_beta_spx_tnx' in data.columns and 'rolling_beta_spx_vix' in data.columns: # rolling_window es 39
-        st.subheader(f'Correlación Móvil (39 Días) entre Beta SPX/TNX y Beta SPX/VIX')
-
-        # Calcular la correlación móvil de Pearson entre las dos columnas de beta
-        rolling_correlation_betas = data['rolling_beta_spx_tnx'].rolling(window=rolling_window_beta).corr(data['rolling_beta_spx_vix'])
-
-        # Añadir la nueva columna al DataFrame
-        data.loc[:, 'rolling_corr_beta_tnx_vix'] = rolling_correlation_betas
-
-        # Eliminar las filas NaN resultantes del cálculo de correlación
-        data.dropna(subset=['rolling_corr_beta_tnx_vix'], inplace=True)
-
-
-        # --- Gráfico de la Correlación Móvil ---
-        fig_corr, ax_corr = plt.subplots(figsize=(12, 6)) # Estilo ya aplicado globalmente
-
-        ax_corr.plot(data.index, data['rolling_corr_beta_tnx_vix'], color='gold', linewidth=1.5, label='Correlación Móvil (Beta SPX/TNX vs Beta SPX/VIX)')
-        ax_corr.axhline(0, color='grey', linestyle='--', linewidth=0.7, alpha=0.8) # Línea de correlación cero
-        ax_corr.axhline(0.5, color='grey', linestyle=':', linewidth=0.7, alpha=0.6) # Línea de correlación moderada positiva
-        ax_corr.axhline(-0.5, color='grey', linestyle=':', linewidth=0.7, alpha=0.6) # Línea de correlación moderada negativa
-
-
-        ax_corr.set_title(f'Correlación Móvil {rolling_window_beta} entre Beta SPX/TNX y Beta SPX/VIX', fontsize=14)
-        ax_corr.set_xlabel('Fecha', fontsize=10)
-        ax_corr.set_ylabel('Coeficiente de Correlación', fontsize=10)
-        ax_corr.legend()
-        ax_corr.grid(True, which='both', linestyle='--', linewidth=0.5, alpha=0.7)
-
-        # Formato de fechas para el eje X
-        fig_corr.autofmt_xdate()
-        ax_corr.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d'))
-        ax_corr.xaxis.set_major_locator(mdates.AutoDateLocator())
-
-        plt.tight_layout()
-        st.pyplot(fig_corr)
-        plt.close(fig_corr) # Cerrar la figura
-        st.markdown("""
-        **Interpretación del Gráfico de Correlación Móvil entre Betas:**
-        *   Este gráfico muestra la correlación móvil entre la Beta SPX/TNX y la Beta SPX/VIX.
-        *   Una correlación positiva (cercana a 1) indica que las dos betas tienden a moverse en la misma dirección; es decir, la sensibilidad del SPX al TNX y al VIX cambian de forma similar.
-        *   Una correlación negativa (cercana a -1) indica que las betas tienden a moverse en direcciones opuestas. Una correlación cercana a 0 sugiere poca relación lineal entre los cambios de las dos betas.
-        """)
-
-    else:
-        st.warning("Saltando cálculo y gráfico de correlación: Las columnas 'rolling_beta_spx_tnx' o 'rolling_beta_spx_vix' no existen.")
-else:
-    st.warning("Saltando cálculo y gráfico de correlación: Faltan columnas de retorno/cambio necesarias (spx_returns, tnx_changes, vix_returns).")
-
-
-# Gráfico 4: Precio del SPX y las Betas Móviles SPX/TNX y SPX/VIX
-if 'SPX' in data.columns and ('rolling_beta_spx_tnx' in data.columns or 'rolling_beta_spx_vix' in data.columns):
-    st.subheader('Precio del SPX y Betas Móviles') # Estilo ya aplicado globalmente
-    fig4, ax_price_combo = plt.subplots(figsize=(12, 8))
-    ax_betas_combo = ax_price_combo.twinx() # Crear un eje y secundario para las betas
-
-    # --- Gráfico del Precio SPX ---
-    ax_price_combo.plot(data.index, data['SPX'], color='steelblue', linewidth=2.0, label='Precio S&P 500')
-    ax_price_combo.set_ylabel('Precio del S&P 500 (SPX)', fontsize=10, color='steelblue')
-    ax_price_combo.tick_params(axis='y', labelcolor='steelblue')
-    ax_price_combo.grid(True, which='both', linestyle='--', linewidth=0.5, alpha=0.7)
-    ax_price_combo.legend(loc='upper left')
-
-
-    # --- Gráfico de las Betas en el Eje Secundario ---
-    beta_lines = []
-    if 'rolling_beta_spx_tnx' in data.columns:
-        line1, = ax_betas_combo.plot(data.index, data['rolling_beta_spx_tnx'], color='magenta', linestyle='--', linewidth=1.5, label='Beta SPX/TNX (39 Días)')
-        beta_lines.append(line1)
-    if 'rolling_beta_spx_vix' in data.columns:
-        line2, = ax_betas_combo.plot(data.index, data['rolling_beta_spx_vix'], color='cyan', linestyle='--', linewidth=1.5, label='Beta SPX/VIX (39 Días)')
-        beta_lines.append(line2)
-
-    ax_betas_combo.set_ylabel('Beta Móvil', fontsize=10, color='grey')
-    ax_betas_combo.tick_params(axis='y', labelcolor='grey')
-    ax_betas_combo.axhline(0, color='grey', linestyle=':', linewidth=0.7, alpha=0.8) # Línea de beta cero
-    ax_betas_combo.legend(handles=beta_lines, loc='upper right')
-
-    # --- Configuración General del Gráfico ---
-    ax_betas_combo.set_title('Precio del S&P 500 y Betas Móviles SPX/TNX y SPX/VIX', fontsize=14)
-    ax_price_combo.set_xlabel('Fecha', fontsize=10)
-    fig4.autofmt_xdate() # Formato automático de fechas
-    ax_price_combo.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d'))
-    ax_price_combo.xaxis.set_major_locator(mdates.AutoDateLocator())
-
-    plt.tight_layout() # Ajustar el diseño para evitar superposiciones
-    st.pyplot(fig4)
-    plt.close(fig4) # Cerrar la figura
-    st.markdown("""
-    **Interpretación del Gráfico 5 (Precio SPX y Betas Móviles):**
-    *   Este gráfico combina la visualización del precio del S&P 500 (SPX, eje izquierdo, línea azul) con las dos betas móviles (Beta SPX/TNX en magenta y Beta SPX/VIX en cian, eje derecho).
-    *   Permite observar directamente cómo evoluciona el precio del SPX mientras cambian sus sensibilidades (betas) al rendimiento de los bonos (TNX) y a la volatilidad (VIX).
-    *   La línea de puntos horizontal en el eje de las betas marca el nivel cero, ayudando a identificar rápidamente si la sensibilidad es positiva o negativa.
-    """)
-
-
-else:
-    st.warning("Saltando Gráfico 4: Faltan datos o columnas necesarias (SPX, rolling_beta_spx_tnx, rolling_beta_spx_vix).")
 
 st.write("---")
 st.write("Desarrollado con Streamlit, yfinance, pandas y matplotlib.")

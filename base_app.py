@@ -1,9 +1,8 @@
 import yfinance as yf
-import pandas as pd
-import numpy as np
+import streamlit as st
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
-from datetime import date
+import numpy as np
 import seaborn as sns
 from matplotlib.lines import Line2D
 
@@ -21,7 +20,7 @@ trading_days_per_year = 252 # For annualizing volatility
 try:
   # Descargar los datos de precios de cierre ajustados para todos los tickers
   data = yf.download(tickers,  period= '1y', interval='1d')['Close'].rename(columns=ticker_names, inplace=True)
-  
+
   if data.empty:
     # Lanzar un error si no se descargan datos
     raise ValueError("No se descargaron datos. Revisa los tickers o el rango de fechas.")
