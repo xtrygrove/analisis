@@ -87,77 +87,77 @@ if not data.empty:
 else:
     st.warning("Saltando cálculos de retornos y cambios debido a un error de descarga de datos.")
 
-
 # --- 4. Cálculo de la Beta Móvil (SPX/TNX y SPX/VIX) ---
-
 # Verificar si los datos están listos para los cálculos de beta
 if 'spx_returns' in data.columns and 'tnx_changes' in data.columns:
-    # Calcular la covarianza móvil entre los retornos del SPX y los cambios en el rendimiento del bono
-    rolling_cov_spx_tnx = data['spx_returns'].rolling(window=rolling_window_beta).cov(data['tnx_changes'])
-
-    # Calcular la varianza móvil de los cambios en el rendimiento del bono
-    rolling_var_tnx = data['tnx_changes'].rolling(window=rolling_window_beta).var()
-
-    # Calcular la beta móvil SPX/TNX
-    # Evitar división por cero si la varianza es 0 o NaN (cuando no hay suficientes datos)
-    # Usamos .loc para evitar SettingWithCopyWarning si data es una vista
-    data.loc[:, 'rolling_beta_spx_tnx'] = rolling_cov_spx_tnx / rolling_var_tnx
+  rolling_cov_spx_tnx = data['spx_returns'].rolling(window=rolling_window_beta).cov(data['tnx_changes'])
+  rolling_var_tnx = data['tnx_changes'].rolling(window=rolling_window_beta).var()
+  data.loc[:, 'rolling_beta_spx_tnx'] = rolling_cov_spx_tnx / rolling_var_tnx
 else:
-    st.warning("Saltando cálculo de beta móvil SPX/TNX debido a la falta de datos o columnas necesarias.")
+  print("Saltando cálculo de beta móvil SPX/TNX debido a la falta de datos o columnas necesarias.")
 
 if 'spx_returns' in data.columns and 'vix_returns' in data.columns:
-     # Calcular la covarianza móvil entre los retornos del SPX y los retornos del VIX
-    rolling_cov_spx_vix = data['spx_returns'].rolling(window=rolling_window_beta).cov(data['vix_returns'])
-
-    # Calcular la varianza móvil de los retornos del VIX
-    rolling_var_vix = data['vix_returns'].rolling(window=rolling_window_beta).var()
-
-    # Calcular la beta móvil SPX/VIX
-    # Evitar división por cero si la varianza es 0 o NaN
-    data.loc[:, 'rolling_beta_spx_vix'] = rolling_cov_spx_vix / rolling_var_vix
+  rolling_cov_spx_vix = data['spx_returns'].rolling(window=rolling_window_beta).cov(data['vix_returns'])
+  rolling_var_vix = data['vix_returns'].rolling(window=rolling_window_beta).var()
+  data.loc[:, 'rolling_beta_spx_vix'] = rolling_cov_spx_vix / rolling_var_vix
 else:
-    st.warning("Saltando cálculo de beta móvil SPX/VIX debido a la falta de datos o columnas necesarias.")
+  print("Saltando cálculo de beta móvil SPX/VIX debido a la falta de datos o columnas necesarias.")
 
-# Eliminar filas con valores NaN resultantes de los cálculos móviles (las primeras 'rolling_window_beta' - 1 filas)
-# Solo hacemos dropna si las columnas existen
+# Eliminar filas con values NaN resultantes de los cálculos móviles
 cols_to_check_beta = []
 if 'rolling_beta_spx_tnx' in data.columns:
-    cols_to_check_beta.append('rolling_beta_spx_tnx')
+  cols_to_check_beta.append('rolling_beta_spx_tnx')
 if 'rolling_beta_spx_vix' in data.columns:
-    cols_to_check_beta.append('rolling_beta_spx_vix')
+  cols_to_check_beta.append('rolling_beta_spx_vix')
 
 if cols_to_check_beta:
-    data.dropna(subset=cols_to_check_beta, inplace=True)
+  data.dropna(subset=cols_to_check_beta, inplace=True)
 else:
-    st.info("Ninguna columna de beta calculada para eliminar NaNs.")
+  print("Ninguna columna de beta calculada para eliminar NaNs.")
 
 # --- 5. Cálculo de la Pendiente (Velocidad) de la Beta Móvil ---
-
-# Verificar si las columnas de beta existen antes de calcular la pendiente
 if 'rolling_beta_spx_tnx' in data.columns:
-    # Calcular la pendiente (velocidad) de la beta móvil SPX/TNX
-    data.loc[:, 'beta_spx_tnx_slope'] = data['rolling_beta_spx_tnx'].diff()
+  data.loc[:, 'beta_spx_tnx_slope'] = data['rolling_beta_spx_tnx'].diff()
 else:
-    st.warning("Columna 'rolling_beta_spx_tnx' no encontrada. No se calculará la pendiente SPX/TNX.")
+  print("Columna 'rolling_beta_spx_tnx' no encontrada. No se calculará la pendiente SPX/TNX.")
 
 if 'rolling_beta_spx_vix' in data.columns:
-    # Calcular la pendiente (velocidad) de la beta móvil SPX/VIX
-    data.loc[:, 'beta_spx_vix_slope'] = data['rolling_beta_spx_vix'].diff()
+  data.loc[:, 'beta_spx_vix_slope'] = data['rolling_beta_spx_vix'].diff()
 else:
-     st.warning("Columna 'rolling_beta_spx_vix' no encontrada. No se calculará la pendiente SPX/VIX.")
+  print("Columna 'rolling_beta_spx_vix' no encontrada. No se calculará la pendiente SPX/VIX.")
 
-# Eliminar filas con valores NaN resultantes del diff() (el primer valor de cada pendiente)
-# Solo hacemos dropna si las columnas de pendiente existen
 cols_to_check_slope = []
 if 'beta_spx_tnx_slope' in data.columns:
-    cols_to_check_slope.append('beta_spx_tnx_slope')
+  cols_to_check_slope.append('beta_spx_tnx_slope')
 if 'beta_spx_vix_slope' in data.columns:
-    cols_to_check_slope.append('beta_spx_vix_slope')
+  cols_to_check_slope.append('beta_spx_vix_slope')
 
 if cols_to_check_slope:
-    data.dropna(subset=cols_to_check_slope, inplace=True)
+  data.dropna(subset=cols_to_check_slope, inplace=True)
 else:
-    st.info("Ninguna columna de pendiente calculada para eliminar NaNs.")
+  print("Ninguna columna de pendiente calculada para eliminar NaNs.")
+
+# --- 6. Cálculo de Volatilidad Realizada y Vol of Vol ---
+if 'SPX' in data.columns:
+    data['log_return'] = np.log(data['SPX'] / data['SPX'].shift(1))
+    data['rv_20d'] = data['log_return'].rolling(window=rolling_window_vol).std() * np.sqrt(trading_days_per_year)
+    data['rv_3m'] = data['log_return'].rolling(window=long_window_vol).std() * np.sqrt(trading_days_per_year)
+    data['vol_of_vol'] = data['rv_20d'].rolling(window=rolling_window_vol).std()
+    data.dropna(subset=['rv_20d', 'rv_3m', 'vol_of_vol', 'log_return'], inplace=True) # Drop NaNs after these calculations
+else:
+    print("Columna 'SPX' no encontrada. No se calcularán métricas de volatilidad.")
+
+# --- 7. Cálculo de Beta SPX/VIX Alternativa (usando Retorno SPX vs Cambio VIX) ---
+if 'SPX' in data.columns and 'VIX' in data.columns:
+    data['SPX_Return_percent'] = data['SPX'].pct_change() * 100
+    data['VIX_Change_points'] = data['VIX'].diff()
+    rolling_cov_alt = data['SPX_Return_percent'].rolling(window=rolling_window_vol).cov(data['VIX_Change_points'])
+    # Using variance of SPX return here, as in the original alternative beta code
+    rolling_var_alt = data['SPX_Return_percent'].rolling(window=rolling_window_vol).var()
+    data['Rolling_Beta_Alt'] = rolling_cov_alt / rolling_var_alt
+    data.dropna(subset=['SPX_Return_percent', 'VIX_Change_points', 'Rolling_Beta_Alt'], inplace=True) # Drop NaNs
+else:
+     print("Columnas 'SPX' o 'VIX' no encontradas. No se calculará la Beta SPX/VIX alternativa.")
 
 # --- 6. Gráficos ---
 # st.header('Visualizaciones') # Eliminado, cada gráfico tendrá su subheader
@@ -165,74 +165,121 @@ else:
 # Gráfico 1: Beta SPX vs TNX y Precio del SPX con Regímenes de Beta
 if 'rolling_beta_spx_tnx' in data.columns and 'SPX' in data.columns:
     st.subheader('Beta SPX/TNX y Precio del SPX')
-
     fig1, (ax1_beta_tnx, ax2_price_tnx) = plt.subplots(
         2, 1,
-        figsize=(12, 8),
-        sharex=True, # Sincronizar el eje de fechas
-        gridspec_kw={'height_ratios': [1, 2]} # Dar más espacio al gráfico de precios
+        figsize=(15, 10),
+        sharex=True,
+        gridspec_kw={'height_ratios': [1, 2]}
     )
-
-    # --- Gráfico Superior (Beta SPX/TNX) ---
-    ax1_beta_tnx.plot(data.index, data['rolling_beta_spx_tnx'], color='blue', linewidth=1.5)
-    ax1_beta_tnx.axhline(0, color='grey', linestyle='--', linewidth=0.7, alpha=0.8)
-    ax1_beta_tnx.set_title(f'Beta Móvil {rolling_window_beta}) del S&P 500 vs Rendimiento del Bono a 10 Años', fontsize=14)
-    ax1_beta_tnx.set_ylabel('Beta Móvil SPX/TNX', fontsize=10)
+    ax1_beta_tnx.plot(data.index, data['rolling_beta_spx_tnx'], color='magenta', linewidth=1.5)
+    ax1_beta_tnx.axhline(0, color='white', linestyle='--', linewidth=0.7, alpha=0.8)
+    ax1_beta_tnx.set_title('Beta Móvil del S&P 500 vs Rendimiento del Bono a 10 Años', fontsize=16)
+    ax1_beta_tnx.set_ylabel(f'Beta Móvil SPX/TNX {rolling_window_beta} días', fontsize=12)
     ax1_beta_tnx.grid(True, which='both', linestyle='--', linewidth=0.5, alpha=0.7)
 
-
-    # --- Gráfico Inferior (Precio del SPX con Regímenes de Beta SPX/TNX) ---
-    ax2_price_tnx.plot(data.index, data['SPX'], color='steelblue', linewidth=1.5, label='Precio S&P 500')
-
-    # Definir las condiciones para colorear el fondo según la beta SPX/TNX
+    ax2_price_tnx.plot(data.index, data['SPX'], color='white', linewidth=1.5, label='Precio S&P 500')
     positive_beta_tnx_condition = data['rolling_beta_spx_tnx'] > 0
     negative_beta_tnx_condition = data['rolling_beta_spx_tnx'] <= 0
-
-    # Colorear el fondo según la beta SPX/TNX
-    y_min_fill_tnx = data['SPX'].min() * 0.9
-    y_max_fill_tnx = data['SPX'].max() * 1.1
-
-    if positive_beta_tnx_condition.any():
-         ax2_price_tnx.fill_between(
-            data.index, y_min_fill_tnx, y_max_fill_tnx,
-            where=positive_beta_tnx_condition,
-            color='green',
-            alpha=0.25,
-            interpolate=True,
-            label='Beta SPX/TNX > 0 (Correlación Positiva)'
-        )
-
-    if negative_beta_tnx_condition.any():
-        ax2_price_tnx.fill_between(
-            data.index, y_min_fill_tnx, y_max_fill_tnx,
-            where=negative_beta_tnx_condition,
-            color='red',
-            alpha=0.25,
-            interpolate=True,
-            label='Beta SPX/TNX < 0 (Correlación Negativa)'
-        )
-
-
-    ax2_price_tnx.set_ylabel('Precio del S&P 500 (SPX)', fontsize=10)
-    ax2_price_tnx.set_xlabel('Fecha', fontsize=10)
+    min_y = data['SPX'].min()
+    max_y = data['SPX'].max()
+    ax2_price_tnx.fill_between(
+        data.index, min_y*0.95, max_y*1.05,
+        where=positive_beta_tnx_condition,
+        color='red',
+        alpha=0.25,
+        label='Beta SPX/TNX > 0 (Correlación Positiva)'
+    )
+    ax2_price_tnx.fill_between(
+        data.index, min_y*0.95, max_y*1.05,
+        where=negative_beta_tnx_condition,
+        color='green',
+        alpha=0.25,
+        label='Beta SPX/TNX < 0 (Correlación Negativa)'
+    )
+    ax2_price_tnx.set_ylabel('Precio del S&P 500 (SPX)', fontsize=12)
+    ax2_price_tnx.set_xlabel('Fecha', fontsize=12)
     ax2_price_tnx.grid(True, which='both', linestyle='--', linewidth=0.5, alpha=0.7)
     ax2_price_tnx.legend(loc='upper left')
-
-    # --- Finalización y Muestra del Gráfico 1 ---
+    ax2_price_tnx.set_ylim(bottom=min_y*0.95, top=max_y*1.05)
     fig1.autofmt_xdate()
     ax2_price_tnx.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d'))
     ax2_price_tnx.xaxis.set_major_locator(mdates.AutoDateLocator())
-    plt.tight_layout(pad=2.0) # Añadir padding entre los gráficos
-    st.pyplot(fig1)
-    plt.close(fig1) # Cerrar la figura para liberar memoria
-    st.markdown("""
-    **Interpretación del Gráfico 1:**
-    *   El gráfico superior muestra la beta móvil del S&P 500 (SPX) con respecto al rendimiento del bono del Tesoro a 10 años (TNX). Una beta positiva (línea magenta sobre cero) sugiere que el SPX tiende a moverse en la misma dirección que los rendimientos de los bonos. Una beta negativa sugiere un movimiento en direcciones opuestas.
-    *   El gráfico inferior muestra el precio del SPX. El fondo se colorea de verde cuando la beta SPX/TNX es positiva (SPX y TNX se mueven juntos) y de rojo cuando es negativa (SPX y TNX se mueven en oposición). Esto ayuda a visualizar cómo se comporta el mercado de acciones en diferentes regímenes de correlación con los tipos de interés.
-    """)
+    plt.tight_layout(pad=2.0)
+    plt.show()
+    else:
+    print("Saltando Gráfico 1: Faltan datos o columnas necesarias (rolling_beta_spx_tnx, SPX).")
 
-else:
-    st.warning("Saltando Gráfico 1: Faltan datos o columnas necesarias (rolling_beta_spx_tnx, SPX).")
+# # Gráfico 1: Beta SPX vs TNX y Precio del SPX con Regímenes de Beta
+# if 'rolling_beta_spx_tnx' in data.columns and 'SPX' in data.columns:
+#     st.subheader('Beta SPX/TNX y Precio del SPX')
+
+#     fig1, (ax1_beta_tnx, ax2_price_tnx) = plt.subplots(
+#         2, 1,
+#         figsize=(12, 8),
+#         sharex=True, # Sincronizar el eje de fechas
+#         gridspec_kw={'height_ratios': [1, 2]} # Dar más espacio al gráfico de precios
+#     )
+
+#     # --- Gráfico Superior (Beta SPX/TNX) ---
+#     ax1_beta_tnx.plot(data.index, data['rolling_beta_spx_tnx'], color='blue', linewidth=1.5)
+#     ax1_beta_tnx.axhline(0, color='grey', linestyle='--', linewidth=0.7, alpha=0.8)
+#     ax1_beta_tnx.set_title(f'Beta Móvil {rolling_window_beta}) del S&P 500 vs Rendimiento del Bono a 10 Años', fontsize=14)
+#     ax1_beta_tnx.set_ylabel('Beta Móvil SPX/TNX', fontsize=10)
+#     ax1_beta_tnx.grid(True, which='both', linestyle='--', linewidth=0.5, alpha=0.7)
+
+
+#     # --- Gráfico Inferior (Precio del SPX con Regímenes de Beta SPX/TNX) ---
+#     ax2_price_tnx.plot(data.index, data['SPX'], color='steelblue', linewidth=1.5, label='Precio S&P 500')
+
+#     # Definir las condiciones para colorear el fondo según la beta SPX/TNX
+#     positive_beta_tnx_condition = data['rolling_beta_spx_tnx'] > 0
+#     negative_beta_tnx_condition = data['rolling_beta_spx_tnx'] <= 0
+
+#     # Colorear el fondo según la beta SPX/TNX
+#     y_min_fill_tnx = data['SPX'].min() * 0.9
+#     y_max_fill_tnx = data['SPX'].max() * 1.1
+
+#     if positive_beta_tnx_condition.any():
+#          ax2_price_tnx.fill_between(
+#             data.index, y_min_fill_tnx, y_max_fill_tnx,
+#             where=positive_beta_tnx_condition,
+#             color='green',
+#             alpha=0.25,
+#             interpolate=True,
+#             label='Beta SPX/TNX > 0 (Correlación Positiva)'
+#         )
+
+#     if negative_beta_tnx_condition.any():
+#         ax2_price_tnx.fill_between(
+#             data.index, y_min_fill_tnx, y_max_fill_tnx,
+#             where=negative_beta_tnx_condition,
+#             color='red',
+#             alpha=0.25,
+#             interpolate=True,
+#             label='Beta SPX/TNX < 0 (Correlación Negativa)'
+#         )
+
+
+#     ax2_price_tnx.set_ylabel('Precio del S&P 500 (SPX)', fontsize=10)
+#     ax2_price_tnx.set_xlabel('Fecha', fontsize=10)
+#     ax2_price_tnx.grid(True, which='both', linestyle='--', linewidth=0.5, alpha=0.7)
+#     ax2_price_tnx.legend(loc='upper left')
+
+#     # --- Finalización y Muestra del Gráfico 1 ---
+#     fig1.autofmt_xdate()
+#     ax2_price_tnx.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d'))
+#     ax2_price_tnx.xaxis.set_major_locator(mdates.AutoDateLocator())
+#     plt.tight_layout(pad=2.0) # Añadir padding entre los gráficos
+#     st.pyplot(fig1)
+#     plt.close(fig1) # Cerrar la figura para liberar memoria
+#     st.markdown("""
+#     **Interpretación del Gráfico 1:**
+#     *   El gráfico superior muestra la beta móvil del S&P 500 (SPX) con respecto al rendimiento del bono del Tesoro a 10 años (TNX). Una beta positiva (línea magenta sobre cero) sugiere que el SPX tiende a moverse en la misma dirección que los rendimientos de los bonos. Una beta negativa sugiere un movimiento en direcciones opuestas.
+#     *   El gráfico inferior muestra el precio del SPX. El fondo se colorea de verde cuando la beta SPX/TNX es positiva (SPX y TNX se mueven juntos) y de rojo cuando es negativa (SPX y TNX se mueven en oposición). Esto ayuda a visualizar cómo se comporta el mercado de acciones en diferentes regímenes de correlación con los tipos de interés.
+#     """)
+
+# else:
+#     st.warning("Saltando Gráfico 1: Faltan datos o columnas necesarias (rolling_beta_spx_tnx, SPX).")
 
 
 # Gráfico 2: Beta SPX vs VIX y Precio del SPX con Regímenes de Beta
