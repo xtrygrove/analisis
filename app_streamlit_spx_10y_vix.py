@@ -139,7 +139,7 @@ else:
 
 # --- 6. Cálculo de Volatilidad Realizada y Vol of Vol ---
 if 'SPX' in data.columns:
-    data['log_return'] = np.log(data['SPX'] / data['SPX'].shift(1))
+    data['log_return'] = np.log(data['SPX'] / data['SPX'].shift())
     data['rv_20d'] = data['log_return'].rolling(window=rolling_window_vol).std() * np.sqrt(trading_days_per_year)
     data['rv_3m'] = data['log_return'].rolling(window=long_window_vol).std() * np.sqrt(trading_days_per_year)
     data['vol_of_vol'] = data['rv_20d'].rolling(window=rolling_window_vol).std()
