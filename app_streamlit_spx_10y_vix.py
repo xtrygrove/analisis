@@ -206,7 +206,7 @@ if 'rolling_beta_spx_tnx' in data.columns and 'SPX' in data.columns:
     ax2_price_tnx.xaxis.set_major_locator(mdates.AutoDateLocator())
     plt.tight_layout(pad=2.0)
     plt.show()
-    else:
+else:
     print("Saltando Gráfico 1: Faltan datos o columnas necesarias (rolling_beta_spx_tnx, SPX).")
 
 # # Gráfico 1: Beta SPX vs TNX y Precio del SPX con Regímenes de Beta
