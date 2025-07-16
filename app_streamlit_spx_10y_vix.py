@@ -23,6 +23,8 @@ ticker_names = {'^GSPC': 'SPX', '^TNX': 'TNX', '^VIX': 'VIX'}
 rolling_window_beta = 39
 rolling_window_vol, long_window_vol = 13, 60 # For RV and Vol of Vol / For 3M RV
 trading_days_per_year = 252 # For annualizing volatility
+period = '1y'
+interval = '1d'
 
 data = pd.DataFrame()
 
@@ -33,7 +35,7 @@ data = pd.DataFrame()
 def download_data(tickers, period, interval):
     try:
         # Descargar los datos de precios de cierre ajustados para todos los tickers
-        data = yf.download(tickers, period='1y', interval='1d')['Close'].rename(columns=ticker_names, inplace=True)
+        data = yf.download(tickers, period, interval)['Close'].rename(columns=ticker_names, inplace=True)
 
         if data.empty:
             return None, "No se descargaron datos. Revisa los tickers o el rango de fechas."
