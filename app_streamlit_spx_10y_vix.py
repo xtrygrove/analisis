@@ -325,5 +325,6 @@ if 'log_return' in data.columns:
         st.pyplot(fig7)
 
 st.write("---")
+st.write("Esta información es solo para fines educativos y no debe considerarse asesoramiento financiero. El rendimiento pasado no garantiza resultados futuros.")
 st.write("Desarrollado con Streamlit, yfinance, pandas y matplotlib.")
-st.write("Eduardo_Fuentes_2025")
+st.write("Eduardo Fuentes 2025")
