@@ -17,7 +17,8 @@ st.set_page_config(layout="wide") # Configurar el layout para usar todo el ancho
 # Establecer el estilo de Matplotlib globalmente para todos los gráficos
 plt.style.use('seaborn-v0_8-darkgrid')
 
-st.title('Análisis de Betas Móviles del S&P 500')
+st.title('Análisis para S&P 500')
+st.title('Indicadores cuantitativos')
 
 # --- Parámetros Fijos ---
 # Tickers
