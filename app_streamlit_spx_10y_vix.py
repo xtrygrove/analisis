@@ -218,5 +218,111 @@ if 'beta_spx_tnx_slope' in data.columns or 'beta_spx_vix_slope' in data.columns:
     fig3.autofmt_xdate()
     st.pyplot(fig3)
 
+
+# Gráfico 4: Precio del SPX y las Betas Móviles SPX/TNX y SPX/VIX
+if 'SPX' in data.columns and ('rolling_beta_spx_tnx' in data.columns or 'rolling_beta_spx_vix' in data.columns):
+    st.subheader("Gráfico 4: Precio SPX y Betas Móviles")
+    fig4, ax_price = plt.subplots(figsize=(15, 8))
+    ax_betas = ax_price.twinx()
+    ax_price.plot(data.index, data['SPX'], color='white', linewidth=2.0, label='Precio S&P 500')
+    ax_price.set_ylabel('Precio SPX', color='white')
+    ax_price.tick_params(axis='y', labelcolor='white')
+    beta_lines = []
+    if 'rolling_beta_spx_tnx' in data.columns:
+        line1, = ax_betas.plot(data.index, data['rolling_beta_spx_tnx'], color='magenta', linestyle='--', linewidth=1.5, label='Beta SPX/TNX')
+        beta_lines.append(line1)
+    if 'rolling_beta_spx_vix' in data.columns:
+        line2, = ax_betas.plot(data.index, data['rolling_beta_spx_vix'], color='cyan', linestyle='--', linewidth=1.5, label='Beta SPX/VIX')
+        beta_lines.append(line2)
+    ax_betas.set_ylabel('Beta Móvil', color='grey')
+    ax_betas.tick_params(axis='y', labelcolor='grey')
+    ax_betas.axhline(0, color='grey', linestyle=':', linewidth=0.7, alpha=0.8)
+    ax_betas.legend(handles=beta_lines, loc='upper right')
+    ax_price.set_xlabel('Fecha')
+    ax_price.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d'))
+    ax_price.xaxis.set_major_locator(mdates.AutoDateLocator())
+    fig4.autofmt_xdate()
+    st.pyplot(fig4)
+
+# Gráfico 5: Beta SPX/VIX Alternativa
+if 'Rolling_Beta_Alt' in data.columns:
+    st.subheader("Gráfico 5: Beta SPX/VIX Alternativa")
+    fig5, ax = plt.subplots(figsize=(14, 7))
+    ax.plot(data.index, data['Rolling_Beta_Alt'], color='purple', label='Rolling Beta')
+    ax.axhline(0, color='yellow', linestyle='--', linewidth=1)
+    ax.set_title('Rolling SPX/VIX Beta (SPX Return vs VIX Change)', fontsize=16)
+    ax.set_xlabel('Fecha')
+    ax.set_ylabel('Beta (VIX points per 1% SPX move)', fontsize=12)
+    ax.legend(loc='upper right')
+    ax.grid(True, linestyle='-', linewidth=0.5, color='gray')
+    st.pyplot(fig5)
+
+# Gráfico 6: Volatilidad Realizada y Vol of Vol
+if 'rv_20d' in data.columns and 'rv_3m' in data.columns and 'vol_of_vol' in data.columns:
+    st.subheader("Gráfico 6: Volatilidad Realizada y Vol of Vol")
+    fig6, ax1 = plt.subplots(figsize=(14, 7))
+    ax1.plot(data.index, data['rv_20d'], color='purple', label='20D rolling RV')
+    ax1.plot(data.index, data['rv_3m'], color='gold', label='3M rolling RV')
+    ax1.set_xlabel('Fecha')
+    ax1.set_ylabel('Volatilidad Realizada Anualizada', color='lightgray')
+    ax1.tick_params(axis='y', labelcolor='lightgray')
+    ax2 = ax1.twinx()
+    ax2.plot(data.index, data['vol_of_vol'], color='dimgray', label='Vol of Vol')
+    ax2.set_ylabel('Vol of Vol', color='dimgray')
+    ax2.tick_params(axis='y', labelcolor='dimgray')
+    lines1, labels1 = ax1.get_legend_handles_labels()
+    lines2, labels2 = ax2.get_legend_handles_labels()
+    ax1.legend(lines1 + lines2, labels1 + labels2, loc='upper right')
+    ax1.grid(False)
+    ax2.grid(False)
+    st.pyplot(fig6)
+
+# Gráfico 7: Distribución de Rendimientos Logarítmicos
+if 'log_return' in data.columns:
+    log_returns = data['log_return'].dropna()
+    if not log_returns.empty:
+        st.subheader("Gráfico 7: Distribución de Rendimientos Logarítmicos")
+        fig7, (ax1, ax2) = plt.subplots(1, 2, figsize=(20, 8))
+        fig7.patch.set_facecolor('black')
+        ax1.scatter(log_returns.index, log_returns, color='purple', label='Log Returns', zorder=5)
+        x_numeric = np.arange(len(log_returns))
+        coeffs = np.polyfit(x_numeric, log_returns, deg=3)
+        p = np.poly1d(coeffs)
+        ax1.plot(log_returns.index, p(x_numeric), color='yellow', linestyle='--', label='Trendline')
+        ax1.set_title('Log Returns with Polynomial Trendline')
+        ax1.set_xlabel('Fecha')
+        ax1.set_ylabel('Log Returns')
+        ax1.legend()
+        ax1.grid(True, linestyle='-', linewidth=0.5, color='gray')
+        ax1.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d'))
+        fig7.autofmt_xdate(rotation=45)
+        mean_val = log_returns.mean()
+        median_val = log_returns.median()
+        mode_val = log_returns.mode()[0] if not log_returns.mode().empty else float('nan')
+        sns.histplot(log_returns, bins=15, ax=ax2, color='purple', edgecolor='#300030',
+                     kde=True, line_kws={'color': 'purple', 'linewidth': 2},
+                     alpha=0.6, stat='frequency')
+        ax2.axvline(mean_val, color='white', linestyle='-', linewidth=2)
+        ax2.axvline(median_val, color='black', linestyle='--', linewidth=2)
+        if not np.isnan(mode_val):
+            ax2.axvline(mode_val, color='black', linestyle='-.', linewidth=2)
+        legend_elements = [
+            Line2D([0], [0], color='white', lw=2, linestyle='-', label=f'Mean:   {mean_val:.4f}'),
+            Line2D([0], [0], color='black', lw=2, linestyle='--', label=f'Median: {median_val:.4f}')
+        ]
+        if not np.isnan(mode_val):
+            legend_elements.append(Line2D([0], [0], color='black', lw=2, linestyle='-.', label=f'Mode:    {mode_val:.4f}'))
+        ax2.legend(handles=legend_elements, loc='upper right', facecolor='black', edgecolor='white')
+        ax2.set_title("Distribución de Log Returns")
+        ax2.set_xlabel('Log Returns')
+        ax2.set_ylabel('Frecuencia')
+        ax2.grid(True, linestyle='-', linewidth=0.5, color='gray')
+        st.pyplot(fig7)
+
+
+
+
+
 st.write("---")
 st.write("Desarrollado con Streamlit, yfinance, pandas y matplotlib.")
+st.write("Eduardo_Fuentes_2025")
