@@ -161,56 +161,6 @@ else:
      print("Columnas 'SPX' o 'VIX' no encontradas. No se calculará la Beta SPX/VIX alternativa.")
 
 # --- 6. Gráficos ---
-# st.header('Visualizaciones') # Eliminado, cada gráfico tendrá su subheader
-
-# Gráfico 1: Beta SPX vs TNX y Precio del SPX con Regímenes de Beta
-if 'rolling_beta_spx_tnx' in data.columns and 'SPX' in data.columns:
-    st.subheader('Beta SPX/TNX y Precio del SPX')
-    fig1, (ax1_beta_tnx, ax2_price_tnx) = plt.subplots(
-        2, 1,
-        figsize=(15, 10),
-        sharex=True,
-        gridspec_kw={'height_ratios': [1, 2]}
-    )
-    ax1_beta_tnx.plot(data.index, data['rolling_beta_spx_tnx'], color='magenta', linewidth=1.5)
-    ax1_beta_tnx.axhline(0, color='white', linestyle='--', linewidth=0.7, alpha=0.8)
-    ax1_beta_tnx.set_title('Beta Móvil del S&P 500 vs Rendimiento del Bono a 10 Años', fontsize=16)
-    ax1_beta_tnx.set_ylabel(f'Beta Móvil SPX/TNX {rolling_window_beta} días', fontsize=12)
-    ax1_beta_tnx.grid(True, which='both', linestyle='--', linewidth=0.5, alpha=0.7)
-
-    ax2_price_tnx.plot(data.index, data['SPX'], color='white', linewidth=1.5, label='Precio S&P 500')
-    positive_beta_tnx_condition = data['rolling_beta_spx_tnx'] > 0
-    negative_beta_tnx_condition = data['rolling_beta_spx_tnx'] <= 0
-    min_y = data['SPX'].min()
-    max_y = data['SPX'].max()
-    ax2_price_tnx.fill_between(
-        data.index, min_y*0.95, max_y*1.05,
-        where=positive_beta_tnx_condition,
-        color='red',
-        alpha=0.25,
-        label='Beta SPX/TNX > 0 (Correlación Positiva)'
-    )
-    ax2_price_tnx.fill_between(
-        data.index, min_y*0.95, max_y*1.05,
-        where=negative_beta_tnx_condition,
-        color='green',
-        alpha=0.25,
-        label='Beta SPX/TNX < 0 (Correlación Negativa)'
-    )
-    ax2_price_tnx.set_ylabel('Precio del S&P 500 (SPX)', fontsize=12)
-    ax2_price_tnx.set_xlabel('Fecha', fontsize=12)
-    ax2_price_tnx.grid(True, which='both', linestyle='--', linewidth=0.5, alpha=0.7)
-    ax2_price_tnx.legend(loc='upper left')
-    ax2_price_tnx.set_ylim(bottom=min_y*0.95, top=max_y*1.05)
-    fig1.autofmt_xdate()
-    ax2_price_tnx.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d'))
-    ax2_price_tnx.xaxis.set_major_locator(mdates.AutoDateLocator())
-    plt.tight_layout(pad=2.0)
-    plt.show()
-else:
-    print("Saltando Gráfico 1: Faltan datos o columnas necesarias (rolling_beta_spx_tnx, SPX).")
-
-
 plt.style.use('dark_background')
 
 # Gráfico 1: Beta SPX vs TNX y Precio del SPX con Regímenes de Beta
