@@ -324,7 +324,7 @@ if 'spx_returns' in data.columns and 'tnx_changes' in data.columns and 'vix_retu
         st.subheader(f'Correlación Móvil (39 Días) entre Beta SPX/TNX y Beta SPX/VIX')
 
         # Calcular la correlación móvil de Pearson entre las dos columnas de beta
-        rolling_correlation_betas = data['rolling_beta_spx_tnx'].rolling(window=rolling_window).corr(data['rolling_beta_spx_vix'])
+        rolling_correlation_betas = data['rolling_beta_spx_tnx'].rolling(window=rolling_window_beta).corr(data['rolling_beta_spx_vix'])
 
         # Añadir la nueva columna al DataFrame
         data.loc[:, 'rolling_corr_beta_tnx_vix'] = rolling_correlation_betas
