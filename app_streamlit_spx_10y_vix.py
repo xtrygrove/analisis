@@ -1,12 +1,15 @@
 # -*- coding: utf-8 -*-
 """app_streamlit_spx/10y/vix.ipynb"""
 
+#Cargar librerías
 import streamlit as st
 import yfinance as yf
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
+import seaborn as sns
+
 
 st.set_page_config(layout="wide") # Configurar el layout para usar todo el ancho de la página
 
@@ -318,10 +321,6 @@ if 'log_return' in data.columns:
         ax2.set_ylabel('Frecuencia')
         ax2.grid(True, linestyle='-', linewidth=0.5, color='gray')
         st.pyplot(fig7)
-
-
-
-
 
 st.write("---")
 st.write("Desarrollado con Streamlit, yfinance, pandas y matplotlib.")
