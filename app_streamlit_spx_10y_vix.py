@@ -10,7 +10,6 @@ import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 from matplotlib.lines import Line2D
 import seaborn as sns
-from scipy.signal import argrelextrema
 
 
 st.set_page_config(layout="wide") # Configurar el layout para usar todo el ancho de la página
@@ -94,34 +93,6 @@ if not data.empty:
 else:
     st.warning("Saltando cálculos de retornos y cambios debido a un error de descarga de datos.")
 
-# --- Cálculo de pendientes entre impulsos en rolling_beta_spx_tnx ---
-if 'rolling_beta_spx_tnx' in data.columns:
-    serie = data['rolling_beta_spx_tnx'].dropna()
-    n = 3  # Sensibilidad del impulso
-    max_idx = argrelextrema(serie.values, np.greater, order=n)[0]
-    min_idx = argrelextrema(serie.values, np.less, order=n)[0]
-    puntos = np.sort(np.concatenate([max_idx, min_idx]))
-
-    pendientes = []
-    for i in range(len(puntos) - 1):
-        i1, i2 = puntos[i], puntos[i+1]
-        x1, x2 = serie.index[i1], serie.index[i2]
-        y1, y2 = serie.iloc[i1], serie.iloc[i2]
-        dias = (x2 - x1).days if hasattr(x2 - x1, 'days') else i2 - i1
-        pendiente = (y2 - y1) / dias
-        pendientes.append({
-            'inicio': x1,
-            'fin': x2,
-            'beta_inicial': y1,
-            'beta_final': y2,
-            'dias': dias,
-            'pendiente': pendiente
-        })
-
-    pendientes_df = pd.DataFrame(pendientes)
-    st.subheader("Tabla de Pendientes por Impulso de la Beta SPX/TNX")
-    st.dataframe(pendientes_df)
-
 # --- 4. Cálculo de la Beta Móvil (SPX/TNX y SPX/VIX) ---
 # Verificar si los datos están listos para los cálculos de beta
 if 'spx_returns' in data.columns and 'tnx_changes' in data.columns:
@@ -149,8 +120,6 @@ if cols_to_check_beta:
   data.dropna(subset=cols_to_check_beta, inplace=True)
 else:
   print("Ninguna columna de beta calculada para eliminar NaNs.")
-
-
 
 # --- 5. Cálculo de la Pendiente (Velocidad) de la Beta Móvil ---
 if 'rolling_beta_spx_tnx' in data.columns:
@@ -209,21 +178,6 @@ if 'rolling_beta_spx_tnx' in data.columns and 'SPX' in data.columns:
     ax1.set_title('Beta Móvil del S&P 500 vs Rendimiento del Bono a 10 Años', fontsize=16)
     ax1.set_ylabel('Beta Móvil SPX/TNX', fontsize=12)
     ax1.grid(True, linestyle='--', linewidth=0.5, alpha=0.7)
-
-    # Añadir líneas de impulso y etiquetas sobre el gráfico de la beta
-    if 'pendientes_df' in locals():
-        for _, row in pendientes_df.iterrows():
-            ax1.plot([row['inicio'], row['fin']], [row['beta_inicial'], row['beta_final']],
-                     color='yellow', linewidth=2, linestyle='--', alpha=0.6)
-            ax1.annotate(f"{row['pendiente']:.3f}", xy=(row['fin'], row['beta_final']),
-                         textcoords="offset points", xytext=(5, 5), ha='left', fontsize=8, color='yellow')
-
-            # Línea y etiqueta sobre el gráfico del SPX
-            ax2.plot([row['inicio'], row['fin']],
-                     [data.loc[row['inicio'], 'SPX'], data.loc[row['fin'], 'SPX']],
-                     color='yellow', linewidth=1.8, linestyle=':', alpha=0.5)
-            ax2.annotate(f"{row['pendiente']:.3f}", xy=(row['fin'], data.loc[row['fin'], 'SPX']),
-                         textcoords="offset points", xytext=(5, -10), ha='left', fontsize=8, color='yellow')
 
     ax2.plot(data.index, data['SPX'], color='white', linewidth=1.5, label='Precio S&P 500')
     pos_cond = data['rolling_beta_spx_tnx'] > 0
