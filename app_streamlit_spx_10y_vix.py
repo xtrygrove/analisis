@@ -29,7 +29,7 @@ ticker_names = {'^GSPC': 'SPX', '^TNX': 'TNX', '^VIX': 'VIX'}
 rolling_window_beta = 39
 rolling_window_vol, long_window_vol = 13, 60 # For RV and Vol of Vol / For 3M RV
 trading_days_per_year = 252 # For annualizing volatility
-period = '1y'
+period = '5y'
 interval = '1d'
 
 data = pd.DataFrame()
