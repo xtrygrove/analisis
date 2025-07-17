@@ -22,8 +22,8 @@ st.title('Indicadores cuantitativos')
 
 # --- Parámetros Fijos ---
 # Tickers
-tickers = ['^GSPC', '^TNX', '^VIX']
-ticker_names = {'^GSPC': 'SPX', '^TNX': 'TNX', '^VIX': 'VIX'}
+tickers = ['BTC-USD', '^TNX', '^VIX'] # '^GSPC'  'BTC-USD', '^TNX', '^VIX'
+ticker_names = {'BTC-USD': 'SPX', '^TNX': 'TNX', '^VIX': 'VIX'}
 
 # Ventana para el cálculo móvil (rolling)
 rolling_window_beta = 39
