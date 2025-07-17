@@ -26,7 +26,7 @@ tickers = ['^GSPC', '^TNX', '^VIX'] # '^GSPC', '^TNX', '^VIX'
 ticker_names = {'^GSPC': 'SPX', '^TNX': 'TNX', '^VIX': 'VIX'}
 
 # Ventana para el cálculo móvil (rolling)
-rolling_window_beta = 39
+rolling_window_beta = 13 # 4, 13, 33
 rolling_window_vol, long_window_vol = 13, 60 # For RV and Vol of Vol / For 3M RV
 trading_days_per_year = 252 # For annualizing volatility
 period = '5y'
