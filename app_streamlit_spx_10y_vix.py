@@ -94,6 +94,34 @@ if not data.empty:
 else:
     st.warning("Saltando cálculos de retornos y cambios debido a un error de descarga de datos.")
 
+# --- Cálculo de pendientes entre impulsos en rolling_beta_spx_tnx ---
+if 'rolling_beta_spx_tnx' in data.columns:
+    serie = data['rolling_beta_spx_tnx'].dropna()
+    n = 3  # Sensibilidad del impulso
+    max_idx = argrelextrema(serie.values, np.greater, order=n)[0]
+    min_idx = argrelextrema(serie.values, np.less, order=n)[0]
+    puntos = np.sort(np.concatenate([max_idx, min_idx]))
+
+    pendientes = []
+    for i in range(len(puntos) - 1):
+        i1, i2 = puntos[i], puntos[i+1]
+        x1, x2 = serie.index[i1], serie.index[i2]
+        y1, y2 = serie.iloc[i1], serie.iloc[i2]
+        dias = (x2 - x1).days if hasattr(x2 - x1, 'days') else i2 - i1
+        pendiente = (y2 - y1) / dias
+        pendientes.append({
+            'inicio': x1,
+            'fin': x2,
+            'beta_inicial': y1,
+            'beta_final': y2,
+            'dias': dias,
+            'pendiente': pendiente
+        })
+
+    pendientes_df = pd.DataFrame(pendientes)
+    st.subheader("Tabla de Pendientes por Impulso de la Beta SPX/TNX")
+    st.dataframe(pendientes_df)
+
 # --- 4. Cálculo de la Beta Móvil (SPX/TNX y SPX/VIX) ---
 # Verificar si los datos están listos para los cálculos de beta
 if 'spx_returns' in data.columns and 'tnx_changes' in data.columns:
@@ -122,33 +150,7 @@ if cols_to_check_beta:
 else:
   print("Ninguna columna de beta calculada para eliminar NaNs.")
 
-# --- Cálculo de pendientes entre impulsos en rolling_beta_spx_tnx ---
-if 'rolling_beta_spx_tnx' in data.columns:
-    serie = data['rolling_beta_spx_tnx'].dropna()
-    n = 3  # Sensibilidad del impulso
-    max_idx = argrelextrema(serie.values, np.greater, order=n)[0]
-    min_idx = argrelextrema(serie.values, np.less, order=n)[0]
-    puntos = np.sort(np.concatenate([max_idx, min_idx]))
 
-    pendientes = []
-    for i in range(len(puntos) - 1):
-        i1, i2 = puntos[i], puntos[i+1]
-        x1, x2 = serie.index[i1], serie.index[i2]
-        y1, y2 = serie.iloc[i1], serie.iloc[i2]
-        dias = (x2 - x1).days if hasattr(x2 - x1, 'days') else i2 - i1
-        pendiente = (y2 - y1) / dias
-        pendientes.append({
-            'inicio': x1,
-            'fin': x2,
-            'beta_inicial': y1,
-            'beta_final': y2,
-            'dias': dias,
-            'pendiente': pendiente
-        })
-
-    pendientes_df = pd.DataFrame(pendientes)
-    st.subheader("Tabla de Pendientes por Impulso de la Beta SPX/TNX")
-    st.dataframe(pendientes_df)
 
 # --- 5. Cálculo de la Pendiente (Velocidad) de la Beta Móvil ---
 if 'rolling_beta_spx_tnx' in data.columns:
