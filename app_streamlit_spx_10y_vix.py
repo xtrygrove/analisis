@@ -170,7 +170,7 @@ plt.style.use('dark_background')
 
 # Gráfico 1: Beta SPX vs TNX y Precio del SPX con Regímenes de Beta
 if 'rolling_beta_spx_tnx' in data.columns and 'SPX' in data.columns:
-    st.subheader("Gráfico 1: Beta SPX vs TNX y Precio del SPX")
+    st.subheader("Beta SPX vs TNX y Precio del SPX")
     fig1, (ax1, ax2) = plt.subplots(2, 1, figsize=(15, 10), sharex=True, gridspec_kw={'height_ratios': [1, 2]})
 
     ax1.plot(data.index, data['rolling_beta_spx_tnx'], color='magenta', linewidth=1.5)
@@ -196,7 +196,7 @@ if 'rolling_beta_spx_tnx' in data.columns and 'SPX' in data.columns:
 
 # Gráfico 2: Beta SPX vs VIX
 if 'rolling_beta_spx_vix' in data.columns:
-    st.subheader("Gráfico 2: Beta SPX vs VIX")
+    st.subheader("Beta SPX vs VIX")
     fig2, ax = plt.subplots(figsize=(15, 5))
     ax.plot(data.index, data['rolling_beta_spx_vix'], color='cyan', linewidth=1.5)
     ax.axhline(0, color='white', linestyle='--', linewidth=0.7, alpha=0.8)
@@ -207,7 +207,7 @@ if 'rolling_beta_spx_vix' in data.columns:
 
 # Gráfico 3: Pendiente de las Betas Móviles
 if 'beta_spx_tnx_slope' in data.columns or 'beta_spx_vix_slope' in data.columns:
-    st.subheader("Gráfico 3: Pendiente de las Betas Móviles")
+    st.subheader("Pendiente de las Betas Móviles")
     fig3, ax = plt.subplots(figsize=(15, 5))
     if 'beta_spx_tnx_slope' in data.columns:
         ax.plot(data.index, data['beta_spx_tnx_slope'], label='Pendiente Beta SPX/TNX', color='magenta')
@@ -226,7 +226,7 @@ if 'beta_spx_tnx_slope' in data.columns or 'beta_spx_vix_slope' in data.columns:
 
 # Gráfico 4: Precio del SPX y las Betas Móviles SPX/TNX y SPX/VIX
 if 'SPX' in data.columns and ('rolling_beta_spx_tnx' in data.columns or 'rolling_beta_spx_vix' in data.columns):
-    st.subheader("Gráfico 4: Precio SPX y Betas Móviles")
+    st.subheader("Precio SPX y Betas Móviles")
     fig4, ax_price = plt.subplots(figsize=(15, 8))
     ax_betas = ax_price.twinx()
     ax_price.plot(data.index, data['SPX'], color='white', linewidth=2.0, label='Precio S&P 500')
@@ -251,7 +251,7 @@ if 'SPX' in data.columns and ('rolling_beta_spx_tnx' in data.columns or 'rolling
 
 # Gráfico 5: Beta SPX/VIX Alternativa
 if 'Rolling_Beta_Alt' in data.columns:
-    st.subheader("Gráfico 5: Beta SPX/VIX Alternativa")
+    st.subheader("Beta SPX/VIX Alternativa")
     fig5, ax = plt.subplots(figsize=(14, 7))
     ax.plot(data.index, data['Rolling_Beta_Alt'], color='purple', label='Rolling Beta')
     ax.axhline(0, color='yellow', linestyle='--', linewidth=1)
@@ -264,7 +264,7 @@ if 'Rolling_Beta_Alt' in data.columns:
 
 # Gráfico 6: Volatilidad Realizada y Vol of Vol
 if 'rv_20d' in data.columns and 'rv_3m' in data.columns and 'vol_of_vol' in data.columns:
-    st.subheader("Gráfico 6: Volatilidad Realizada y Vol of Vol")
+    st.subheader("Volatilidad Realizada y Vol of Vol")
     fig6, ax1 = plt.subplots(figsize=(14, 7))
     ax1.plot(data.index, data['rv_20d'], color='purple', label='20D rolling RV')
     ax1.plot(data.index, data['rv_3m'], color='gold', label='3M rolling RV')
@@ -286,7 +286,7 @@ if 'rv_20d' in data.columns and 'rv_3m' in data.columns and 'vol_of_vol' in data
 if 'log_return' in data.columns:
     log_returns = data['log_return'].dropna()
     if not log_returns.empty:
-        st.subheader("Gráfico 7: Distribución de Rendimientos Logarítmicos")
+        st.subheader("Distribución de Rendimientos Logarítmicos")
         fig7, (ax1, ax2) = plt.subplots(1, 2, figsize=(20, 8))
         fig7.patch.set_facecolor('black')
         ax1.scatter(log_returns.index, log_returns, color='purple', label='Log Returns', zorder=5)
