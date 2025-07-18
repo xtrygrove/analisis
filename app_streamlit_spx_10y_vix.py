@@ -241,7 +241,7 @@ if 'SPX' in data.columns and ('rolling_beta_spx_tnx' in data.columns or 'rolling
         beta_lines.append(line2)
     ax_betas.set_ylabel('Beta Móvil', color='grey')
     ax_betas.tick_params(axis='y', labelcolor='grey')
-    ax_betas.axhline(0, color='grey', linestyle=':', linewidth=0.7, alpha=0.8)
+    ax_betas.axhline(0, color='grey', linestyle=':', linewidth=1.0, alpha=0.8)
     ax_betas.legend(handles=beta_lines, loc='upper right')
     ax_price.set_xlabel('Fecha')
     ax_price.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d'))
