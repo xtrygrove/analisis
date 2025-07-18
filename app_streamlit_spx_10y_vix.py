@@ -247,8 +247,8 @@ if 'SPX' in data.columns and ('rolling_beta_spx_tnx' in data.columns or 'rolling
     ax_price.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d'))
     ax_price.xaxis.set_major_locator(mdates.AutoDateLocator())
     fig4.autofmt_xdate()
-    ax1.grid(False)
-    ax2.grid(False)
+    ax_price.grid(False)
+    ax_betas.grid(False)
     st.pyplot(fig4)
 
 # Gráfico 5: Beta SPX/VIX Alternativa
