@@ -231,7 +231,7 @@ if 'SPX' in data.columns and ('rolling_beta_spx_tnx' in data.columns or 'rolling
     ax_betas = ax_price.twinx()
     ax_price.plot(data.index, data['SPX'], color='white', linewidth=2.0, label='Precio S&P 500')
     ax_price.set_ylabel('Precio SPX', color='white')
-    ax_price.tick_params(axis='y', labelcolor='white')
+    # ax_price.tick_params(axis='y', labelcolor='white')
     beta_lines = []
     if 'rolling_beta_spx_tnx' in data.columns:
         line1, = ax_betas.plot(data.index, data['rolling_beta_spx_tnx'], color='magenta', linestyle='--', linewidth=1.5, label='Beta SPX/TNX')
@@ -240,7 +240,7 @@ if 'SPX' in data.columns and ('rolling_beta_spx_tnx' in data.columns or 'rolling
         line2, = ax_betas.plot(data.index, data['rolling_beta_spx_vix'], color='cyan', linestyle='--', linewidth=1.5, label='Beta SPX/VIX')
         beta_lines.append(line2)
     ax_betas.set_ylabel('Beta Móvil', color='grey')
-    ax_betas.tick_params(axis='y', labelcolor='grey')
+    # ax_betas.tick_params(axis='y', labelcolor='grey')
     ax_betas.axhline(0, color='grey', linestyle=':', linewidth=0.7, alpha=0.8)
     ax_betas.legend(handles=beta_lines, loc='upper right')
     ax_price.set_xlabel('Fecha')
