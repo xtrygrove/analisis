@@ -22,7 +22,7 @@ st.title('Indicadores cuantitativos')
 
 # --- Parámetros Fijos ---
 # Tickers
-tickers = ['^GSPC', '^FVX', '^VIX'] # '^GSPC', '^TNX', '^VIX' '^FVX'
+tickers = ['^GSPC', '^IRX', '^VIX'] # '^GSPC', '^TNX', '^VIX' '^FVX' '^IRX'
 ticker_names = {'^GSPC': 'SPX', '^TNX': 'TNX', '^VIX': 'VIX'}
 
 # Ventana para el cálculo móvil (rolling)
