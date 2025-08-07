@@ -26,7 +26,7 @@ tickers = ['^GSPC', '^TNX', '^VIX']
 ticker_names = {'^GSPC': 'SPX', '^TNX': 'TNX', '^VIX': 'VIX'}
 
 # Ventana para el cálculo móvil (rolling)
-rolling_window_beta = 13 # 4, 13, 33
+rolling_window_beta = 13 # 13, 33
 rolling_window_vol, long_window_vol = 21, 63 # For RV and Vol of Vol / For 3M RV
 trading_days_per_year = 252 # For annualizing volatility
 period = '1y'    # 1d,5d,1mo,3mo,6mo,1y,2y,5y,10y,ytd,max 
@@ -174,7 +174,7 @@ if 'rolling_beta_spx_tnx' in data.columns and 'SPX' in data.columns:
     fig1, (ax1, ax2) = plt.subplots(2, 1, figsize=(15, 10), sharex=True, gridspec_kw={'height_ratios': [1, 2]})
 
     ax1.plot(data.index, data['rolling_beta_spx_tnx'], color='magenta', linewidth=1.5)
-    ax1.axhline(0, color='white', linestyle='--', linewidth=0.7, alpha=0.8)
+    ax1.axhline(-0.05, color='white', linestyle='--', linewidth=0.7, alpha=0.8)
     ax1.set_title('Beta Móvil del S&P 500 vs Rendimiento del Bono a 10 Años', fontsize=16)
     ax1.set_ylabel('Beta Móvil SPX/TNX', fontsize=12)
     ax1.grid(True, linestyle='--', linewidth=0.5, alpha=0.7)
