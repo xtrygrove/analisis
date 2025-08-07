@@ -180,8 +180,8 @@ if 'rolling_beta_spx_tnx' in data.columns and 'SPX' in data.columns:
     ax1.grid(True, linestyle='--', linewidth=0.5, alpha=0.7)
 
     ax2.plot(data.index, data['SPX'], color='white', linewidth=1.5, label='Precio S&P 500')
-    pos_cond = data['rolling_beta_spx_tnx'] > 0
-    neg_cond = data['rolling_beta_spx_tnx'] <= 0
+    pos_cond = data['rolling_beta_spx_tnx'] > -0.05
+    neg_cond = data['rolling_beta_spx_tnx'] <= -0.05
     min_y, max_y = data['SPX'].min(), data['SPX'].max()
     ax2.fill_between(data.index, min_y*0.95, max_y*1.05, where=pos_cond, color='red', alpha=0.25, label='Beta > 0')
     ax2.fill_between(data.index, min_y*0.95, max_y*1.05, where=neg_cond, color='green', alpha=0.25, label='Beta < 0')
