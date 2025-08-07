@@ -174,14 +174,14 @@ if 'rolling_beta_spx_tnx' in data.columns and 'SPX' in data.columns:
     fig1, (ax1, ax2) = plt.subplots(2, 1, figsize=(15, 10), sharex=True, gridspec_kw={'height_ratios': [1, 2]})
 
     ax1.plot(data.index, data['rolling_beta_spx_tnx'], color='magenta', linewidth=1.5)
-    ax1.axhline(-0.05, color='white', linestyle='--', linewidth=0.7, alpha=0.8)
+    ax1.axhline(0, color='white', linestyle='--', linewidth=0.7, alpha=0.8)
     ax1.set_title('Beta Móvil del S&P 500 vs Rendimiento del Bono a 10 Años', fontsize=16)
     ax1.set_ylabel('Beta Móvil SPX/TNX', fontsize=12)
     ax1.grid(True, linestyle='--', linewidth=0.5, alpha=0.7)
 
     ax2.plot(data.index, data['SPX'], color='white', linewidth=1.5, label='Precio S&P 500')
-    pos_cond = data['rolling_beta_spx_tnx'] > -0.05
-    neg_cond = data['rolling_beta_spx_tnx'] <= -0.05
+    pos_cond = data['rolling_beta_spx_tnx'] > 0
+    neg_cond = data['rolling_beta_spx_tnx'] <= 0
     min_y, max_y = data['SPX'].min(), data['SPX'].max()
     ax2.fill_between(data.index, min_y*0.95, max_y*1.05, where=pos_cond, color='red', alpha=0.25, label='Beta > 0')
     ax2.fill_between(data.index, min_y*0.95, max_y*1.05, where=neg_cond, color='green', alpha=0.25, label='Beta < 0')
