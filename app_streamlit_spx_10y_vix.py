@@ -39,43 +39,21 @@ data = pd.DataFrame()
 
 @st.cache_data # Cachear la descarga de datos para evitar descargas repetidas
 def download_data(tickers, period, interval):
-    # try:
-    #     # Descargar los datos de precios de cierre para todos los tickers
-    #     data = yf.download(tickers, period=period, interval=interval)['Close'].rename(columns=ticker_names)
-    #     #data.rename(columns=ticker_names, inplace=True)
-
-    #     if data.empty:
-    #         return None, "No se descargaron datos. Revisa los tickers o el rango de fechas."
-
-    #     # Rellenar valores faltantes (los fines de semana, por ejemplo)
-    #     data.ffill(inplace=True)
-
-    #     return data, None # Retorna el DataFrame y None para el error
-
-    # except Exception as e:
-    #     return None, f"Ocurrió un error al descargar los datos: {e}" # Retorna None y el mensaje de error
-
     try:
-      # Descargar los datos de precios de cierre ajustados para todos los tickers
-      data = yf.download(tickers,  period=period, interval=interval)['Close'].rename(columns=ticker_names)
-    #   data.rename(columns=ticker_names, inplace=True)
+        # Descargar los datos de precios de cierre para todos los tickers
+        data = yf.download(tickers, period=period, interval=interval)['Close'].rename(columns=ticker_names, inplace=True)
+        # data.rename(columns=ticker_names, inplace=True)
 
-      if data.empty:
-        # Lanzar un error si no se descargan datos
-        raise ValueError("No se descargaron datos. Revisa los tickers o el rango de fechas.")
+        if data.empty:
+            return None, "No se descargaron datos. Revisa los tickers o el rango de fechas."
 
-      # Rellenar valores faltantes (los fines de semana, por ejemplo)
-      data.ffill(inplace=True)
+        # Rellenar valores faltantes (los fines de semana, por ejemplo)
+        data.ffill(inplace=True)
 
-      # Inicializar el indicador de descarga de datos
-      data_downloaded = True
+        return data, None # Retorna el DataFrame y None para el error
 
     except Exception as e:
-      print(f"Ocurrió un error al descargar los datos: {e}")
-      # Establecer el indicador de descarga de datos a False si la descarga falla
-      data_downloaded = False
-
-    data.to_csv('datos_mercado.csv')
+        return None, f"Ocurrió un error al descargar los datos: {e}" # Retorna None y el mensaje de error
 
 # Descargar datos (se ejecuta siempre al cargar/refrescar la app)
 data, download_error = download_data(tickers, period, interval)
