@@ -70,12 +70,12 @@ def download_data(tickers, period, interval):
       # Inicializar el indicador de descarga de datos
       data_downloaded = True
 
-  except Exception as e:
-    print(f"Ocurrió un error al descargar los datos: {e}")
-    # Establecer el indicador de descarga de datos a False si la descarga falla
-    data_downloaded = False
+    except Exception as e:
+      print(f"Ocurrió un error al descargar los datos: {e}")
+      # Establecer el indicador de descarga de datos a False si la descarga falla
+      data_downloaded = False
 
-  data.to_csv('datos_mercado.csv')
+    data.to_csv('datos_mercado.csv')
 
 # Descargar datos (se ejecuta siempre al cargar/refrescar la app)
 data, download_error = download_data(tickers, period, interval)
