@@ -40,7 +40,7 @@ data = pd.DataFrame()
 @st.cache_data # Cachear la descarga de datos para evitar descargas repetidas
 def download_data(tickers, period, interval):
     try:
-        # Descargar los datos de precios de cierre para todos los tickers
+        # Descargar los datos de precios de cierre ajustados para todos los tickers
         data = yf.download(tickers, period=period, interval=interval)['Close']
         data.rename(columns=ticker_names, inplace=True)
 
