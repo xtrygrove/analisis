@@ -41,8 +41,8 @@ data = pd.DataFrame()
 def download_data(tickers, period, interval):
     try:
         # Descargar los datos de precios de cierre ajustados para todos los tickers
-        data = yf.download(tickers, period=period, interval=interval)['Close']
-        data.rename(columns=ticker_names, inplace=True)
+        data = yf.download(tickers, period=period, interval=interval)['Close'].rename(columns=ticker_names)
+        #data.rename(columns=ticker_names, inplace=True)
 
         if data.empty:
             return None, "No se descargaron datos. Revisa los tickers o el rango de fechas."
