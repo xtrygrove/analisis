@@ -23,13 +23,13 @@ st.title('Indicadores cuantitativos')
 # --- Parámetros Fijos ---
 # Tickers
 tickers = ['^GSPC', '^TNX', '^VIX']
-ticker_names = {'^GSPC':'SPX', '^TNX':'TNX', '^VIX':'VIX'}
+ticker_names = {'^GSPC': 'SPX', '^TNX': 'TNX', '^VIX': 'VIX'}
 
 # Ventana para el cálculo móvil (rolling)
 rolling_window_beta = 17 # 13, 33
 rolling_window_vol, long_window_vol = 21, 63 # For RV and Vol of Vol / For 3M RV
 trading_days_per_year = 252 # For annualizing volatility
-period = '1y'    # 1d,5d,1mo,3mo,6mo,1y,2y,5y,10y,ytd,max 
+period = 'ytd'    # 1d,5d,1mo,3mo,6mo,1y,2y,5y,10y,ytd,max 
 interval = '1d'  # 1m,2m,5m,15m,30m,60m,90m,1h,1d,5d,1wk,1mo,3mo
 
 data = pd.DataFrame()
@@ -54,8 +54,6 @@ def download_data(tickers, period, interval):
 
     except Exception as e:
         return None, f"Ocurrió un error al descargar los datos: {e}" # Retorna None y el mensaje de error
-
-    data.to_csv('datos_mercado.csv')
 
 # Descargar datos (se ejecuta siempre al cargar/refrescar la app)
 data, download_error = download_data(tickers, period, interval)
