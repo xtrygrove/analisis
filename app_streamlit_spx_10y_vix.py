@@ -109,17 +109,17 @@ if 'spx_returns' in data.columns and 'vix_returns' in data.columns:
 else:
   print("Saltando cálculo de beta móvil SPX/VIX debido a la falta de datos o columnas necesarias.")
 
-# Eliminar filas con values NaN resultantes de los cálculos móviles
-cols_to_check_beta = []
-if 'rolling_beta_spx_tnx' in data.columns:
-  cols_to_check_beta.append('rolling_beta_spx_tnx')
-if 'rolling_beta_spx_vix' in data.columns:
-  cols_to_check_beta.append('rolling_beta_spx_vix')
+# # Eliminar filas con values NaN resultantes de los cálculos móviles
+# cols_to_check_beta = []
+# if 'rolling_beta_spx_tnx' in data.columns:
+#   cols_to_check_beta.append('rolling_beta_spx_tnx')
+# if 'rolling_beta_spx_vix' in data.columns:
+#   cols_to_check_beta.append('rolling_beta_spx_vix')
 
-if cols_to_check_beta:
-  data.dropna(subset=cols_to_check_beta, inplace=True)
-else:
-  print("Ninguna columna de beta calculada para eliminar NaNs.")
+# if cols_to_check_beta:
+#   data.dropna(subset=cols_to_check_beta, inplace=True)
+# else:
+#   print("Ninguna columna de beta calculada para eliminar NaNs.")
 
 # --- 5. Cálculo de la Pendiente (Velocidad) de la Beta Móvil ---
 if 'rolling_beta_spx_tnx' in data.columns:
