@@ -165,6 +165,23 @@ if 'SPX' in data.columns and 'VIX' in data.columns:
 else:
      print("Columnas 'SPX' o 'VIX' no encontradas. No se calculará la Beta SPX/VIX alternativa.")
 
+
+#Tabla con data
+st.subheader("📄 Últimos datos del análisis")
+st.dataframe(data.tail(10))  # Mostrar las últimas 10 filas
+
+# Convertir DataFrame a CSV
+csv_data = data.to_csv(index=True).encode('utf-8')
+
+# Botón de descarga
+st.download_button(
+    label="⬇️ Descargar todos los datos como CSV",
+    data=csv_data,
+    file_name='indicadores_spx_tnx_vix.csv',
+    mime='text/csv'
+)
+
+
 # --- 6. Gráficos ---
 plt.style.use('dark_background')
 
@@ -325,6 +342,9 @@ if 'log_return' in data.columns:
         ax2.set_ylabel('Frecuencia')
         ax2.grid(True, linestyle='-', linewidth=0.5, color='gray')
         st.pyplot(fig7)
+
+
+
 
 st.write("---")
 st.write("Esta información es solo para fines educativos y no debe considerarse asesoramiento financiero. El rendimiento pasado no garantiza resultados futuros.")
