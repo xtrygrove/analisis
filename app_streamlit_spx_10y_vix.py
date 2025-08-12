@@ -84,11 +84,11 @@ if not data.empty:
 
     # Eliminar filas con valores NaN resultantes de los cálculos iniciales (pct_change, diff)
     # Es importante que al menos una de las columnas 'spx_returns', 'tnx_changes', 'vix_returns' exista para evitar errores si alguna no se calculó.
-    # cols_to_check_initial = [col for col in ['spx_returns', 'tnx_changes', 'vix_returns'] if col in data.columns]
-    # if cols_to_check_initial:
-    #     data.dropna(subset=cols_to_check_initial, inplace=True)
-    # else:
-    #     st.info("No hay columnas de retorno/cambio para eliminar NaNs.")
+    cols_to_check_initial = [col for col in ['spx_returns', 'tnx_changes', 'vix_returns'] if col in data.columns]
+    if cols_to_check_initial:
+        data.dropna(subset=cols_to_check_initial, inplace=True)
+    else:
+        st.info("No hay columnas de retorno/cambio para eliminar NaNs.")
 
 else:
     st.warning("Saltando cálculos de retornos y cambios debido a un error de descarga de datos.")
