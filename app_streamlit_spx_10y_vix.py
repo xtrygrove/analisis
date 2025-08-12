@@ -54,7 +54,6 @@ def download_data(tickers, period, interval):
 
     except Exception as e:
         return None, f"Ocurrió un error al descargar los datos: {e}" # Retorna None y el mensaje de error
-    data.to_csv('datos_mercado.csv')
 
 # Descargar datos (se ejecuta siempre al cargar/refrescar la app)
 data, download_error = download_data(tickers, period, interval)
