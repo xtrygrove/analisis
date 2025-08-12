@@ -22,12 +22,12 @@ st.title('Indicadores cuantitativos')
 
 # --- Parámetros Fijos ---
 # Tickers
-tickers = ['^GSPC', '^TNX', '^VIX']
+tickers = ['^GSPC', '^TNX', '^VIX'] # '^GSPC', '^TNX', '^VIX' '^FVX' '^IRX'
 ticker_names = {'^GSPC': 'SPX', '^TNX': 'TNX', '^VIX': 'VIX'}
 
 # Ventana para el cálculo móvil (rolling)
-rolling_window_beta = 17 # 13, 33
-rolling_window_vol, long_window_vol = 21, 63 # For RV and Vol of Vol / For 3M RV
+rolling_window_beta = 33 # 4, 13, 33
+rolling_window_vol, long_window_vol = 13, 60 # For RV and Vol of Vol / For 3M RV
 trading_days_per_year = 252 # For annualizing volatility
 period = '1y'    # 1d,5d,1mo,3mo,6mo,1y,2y,5y,10y,ytd,max 
 interval = '1d'  # 1m,2m,5m,15m,30m,60m,90m,1h,1d,5d,1wk,1mo,3mo
@@ -164,23 +164,6 @@ if 'SPX' in data.columns and 'VIX' in data.columns:
     data.dropna(subset=['SPX_Return_percent', 'VIX_Change_points', 'Rolling_Beta_Alt'], inplace=True) # Drop NaNs
 else:
      print("Columnas 'SPX' o 'VIX' no encontradas. No se calculará la Beta SPX/VIX alternativa.")
-
-
-#Tabla con data
-st.subheader("📄 Últimos datos del análisis")
-st.dataframe(data.tail(10))  # Mostrar las últimas 10 filas
-
-# Convertir DataFrame a CSV
-csv_data = data.to_csv(index=True).encode('utf-8')
-
-# Botón de descarga
-st.download_button(
-    label="⬇️ Descargar todos los datos como CSV",
-    data=csv_data,
-    file_name='indicadores_spx_tnx_vix.csv',
-    mime='text/csv'
-)
-
 
 # --- 6. Gráficos ---
 plt.style.use('dark_background')
@@ -342,6 +325,23 @@ if 'log_return' in data.columns:
         ax2.set_ylabel('Frecuencia')
         ax2.grid(True, linestyle='-', linewidth=0.5, color='gray')
         st.pyplot(fig7)
+
+#TABLA 
+st.subheader("📄 Últimos datos del análisis")
+st.dataframe(data.tail(10))  # Mostrar las últimas 10 filas
+
+# Convertir DataFrame a CSV
+csv_data = data.to_csv(index=True).encode('utf-8')
+
+# Botón de descarga
+st.download_button(
+    label="⬇️ Descargar todos los datos como CSV",
+    data=csv_data,
+    file_name='indicadores_spx_tnx_vix.csv',
+    mime='text/csv'
+)
+
+
 
 
 
