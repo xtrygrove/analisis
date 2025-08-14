@@ -45,7 +45,7 @@ def download_data(tickers, period, interval):
     data.rename(columns=ticker_names, inplace=True)
 
     if data.empty:
-        return None, "No se descargaron datos. Revisa los tickers o el rango de fechas."
+      return None, "No se descargaron datos. Revisa los tickers o el rango de fechas."
 
     # Rellenar valores faltantes (los fines de semana, por ejemplo)
     data.ffill(inplace=True)
@@ -53,14 +53,14 @@ def download_data(tickers, period, interval):
     return data, None # Retorna el DataFrame y None para el error
 
   except Exception as e:
-      return None, f"Ocurrió un error al descargar los datos: {e}" # Retorna None y el mensaje de error
+    return None, f"Ocurrió un error al descargar los datos: {e}" # Retorna None y el mensaje de error
 
 
 # Descargar datos (se ejecuta siempre al cargar/refrescar la app)
 data, download_error = download_data(tickers, period, interval)
 if download_error:
-    st.error(download_error)
-    st.stop() # Detiene la ejecución si hay un error de descarga
+  st.error(download_error)
+  st.stop() # Detiene la ejecución si hay un error de descarga
 
 # Verificar si los datos se descargaron correctamente antes de continuar
 if not data.empty:
