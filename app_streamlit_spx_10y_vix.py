@@ -165,8 +165,8 @@ if 'SPX' in data.columns and 'VIX' in data.columns:
 else:
      print("Columnas 'SPX' o 'VIX' no encontradas. No se calculará la Beta SPX/VIX alternativa.")
 
+
 # --- 6. Gráficos ---
-plt.style.use('dark_background')
 
 # Gráfico 1: Beta SPX vs TNX y Precio del SPX con Regímenes de Beta
 if 'rolling_beta_spx_tnx' in data.columns and 'SPX' in data.columns:
