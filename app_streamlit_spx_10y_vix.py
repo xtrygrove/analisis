@@ -15,15 +15,15 @@ import seaborn as sns
 st.set_page_config(layout="wide") # Configurar el layout para usar todo el ancho de la página
 
 # Establecer el estilo de Matplotlib globalmente para todos los gráficos
-plt.style.use('seaborn-v0_8-darkgrid')
+plt.style.use('dark_background')
 
 st.title('Análisis para S&P 500')
 st.title('Indicadores cuantitativos')
 
 # --- Parámetros Fijos ---
 # Tickers
-tickers = ['^GSPC', '^TNX', '^VIX'] # '^GSPC', '^TNX', '^VIX' '^FVX' '^IRX'
-ticker_names = {'^GSPC': 'SPX', '^TNX': 'TNX', '^VIX': 'VIX'}
+tickers = ['^GSPC', '^TNX', '^VIX'] # '^GSPC', '^TNX', '^VIX'
+ticker_names = {'^GSPC':'SPX', '^TNX':'TNX', '^VIX':'VIX'}
 
 # Ventana para el cálculo móvil (rolling)
 rolling_window_beta = 17 # 4, 13, 33
