@@ -64,32 +64,32 @@ if download_error:
 
 # Verificar si los datos se descargaron correctamente antes de continuar
 if not data.empty:
-    # Retornos porcentuales diarios para el S&P 500
-    if 'SPX' in data.columns:
-        data['spx_returns'] = data['SPX'].pct_change()
-    else:
-        st.warning("Columna 'SPX' no encontrada. No se calcularán los retornos del SPX.")
+  # Retornos porcentuales diarios para el S&P 500
+  if 'SPX' in data.columns:
+      data['spx_returns'] = data['SPX'].pct_change()
+  else:
+      st.warning("Columna 'SPX' no encontrada. No se calcularán los retornos del SPX.")
 
-    # Cambios absolutos diarios en el rendimiento del bono a 10 años
-    if 'TNX' in data.columns:
-        data['tnx_changes'] = data['TNX'].diff()
-    else:
-        st.warning("Columna 'TNX' no encontrada. No se calcularán los cambios del TNX.")
+  # Cambios absolutos diarios en el rendimiento del bono a 10 años
+  if 'TNX' in data.columns:
+      data['tnx_changes'] = data['TNX'].diff()
+  else:
+      st.warning("Columna 'TNX' no encontrada. No se calcularán los cambios del TNX.")
 
-    # Retornos porcentuales diarios para VIX
-    if 'VIX' in data.columns:
-        data['vix_returns'] = data['VIX'].pct_change()
-    else:
-        st.warning("Columna 'VIX' no encontrada. No se calcularán los retornos del VIX.")
+  # Retornos porcentuales diarios para VIX
+  if 'VIX' in data.columns:
+      data['vix_returns'] = data['VIX'].pct_change()
+  else:
+      st.warning("Columna 'VIX' no encontrada. No se calcularán los retornos del VIX.")
 
 
-    # Eliminar filas con valores NaN resultantes de los cálculos iniciales (pct_change, diff)
-    # Es importante que al menos una de las columnas 'spx_returns', 'tnx_changes', 'vix_returns' exista para evitar errores si alguna no se calculó.
-    cols_to_check_initial = [col for col in ['spx_returns', 'tnx_changes', 'vix_returns'] if col in data.columns]
-    if cols_to_check_initial:
-        data.dropna(subset=cols_to_check_initial, inplace=True)
-    else:
-        st.info("No hay columnas de retorno/cambio para eliminar NaNs.")
+  # Eliminar filas con valores NaN resultantes de los cálculos iniciales (pct_change, diff)
+  # Es importante que al menos una de las columnas 'spx_returns', 'tnx_changes', 'vix_returns' exista para evitar errores si alguna no se calculó.
+  cols_to_check_initial = [col for col in ['spx_returns', 'tnx_changes', 'vix_returns'] if col in data.columns]
+  if cols_to_check_initial:
+      data.dropna(subset=cols_to_check_initial, inplace=True)
+  else:
+      st.info("No hay columnas de retorno/cambio para eliminar NaNs.")
 
 else:
     st.warning("Saltando cálculos de retornos y cambios debido a un error de descarga de datos.")
