@@ -327,20 +327,20 @@ if 'log_return' in data.columns:
         ax2.grid(True, linestyle='-', linewidth=0.5, color='gray')
         st.pyplot(fig7)
 
-#TABLA 
-st.subheader("📄 Últimos datos del análisis")
-st.dataframe(data.tail(5))  # Mostrar las últimas 5 filas
+# #TABLA 
+# st.subheader("📄 Últimos datos del análisis")
+# st.dataframe(data.tail(5))  # Mostrar las últimas 5 filas
 
-# Convertir DataFrame a CSV
-csv_data = data.to_csv(index=True).encode('utf-8')
+# # Convertir DataFrame a CSV
+# csv_data = data.to_csv(index=True).encode('utf-8')
 
-# Botón de descarga
-st.download_button(
-    label="⬇️ Descargar todos los datos como CSV",
-    data=csv_data,
-    file_name='indicadores_spx_tnx_vix.csv',
-    mime='text/csv'
-)
+# # Botón de descarga
+# st.download_button(
+#     label="⬇️ Descargar todos los datos como CSV",
+#     data=csv_data,
+#     file_name='indicadores_spx_tnx_vix.csv',
+#     mime='text/csv'
+# )
 
 
 st.write("---")
