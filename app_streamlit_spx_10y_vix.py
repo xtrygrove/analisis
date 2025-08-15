@@ -327,6 +327,7 @@ if 'log_return' in data.columns:
         ax2.grid(True, linestyle='-', linewidth=0.5, color='gray')
         st.pyplot(fig7)
 
+
 #TABLA 
 st.subheader("📄 Últimos datos del análisis")
 st.dataframe(data.tail(5))  # Mostrar las últimas 5 filas
@@ -341,6 +342,7 @@ st.download_button(
     file_name='indicadores_spx_tnx_vix.csv',
     mime='text/csv'
 )
+
 
 
 st.write("---")
