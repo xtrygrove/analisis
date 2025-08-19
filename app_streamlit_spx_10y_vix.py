@@ -40,20 +40,20 @@ interval = '1d'         # 1m,2m,5m,15m,30m,60m,90m,1h,1d,5d,1wk,1mo,3mo
 @st.cache_data # Cachear la descarga de datos para evitar descargas repetidas
 def download_data(tickers, period, interval):
   try:
-      # Descargar los datos de precios de cierre ajustados para todos los tickers
-      data = yf.download(tickers, period=period, interval=interval)['Close']
-      data.rename(columns=ticker_names, inplace=True)
+    # Descargar los datos de precios de cierre ajustados para todos los tickers
+    data = yf.download(tickers, period=period, interval=interval)['Close'].rename(columns=ticker_names)
+    # data.rename(columns=ticker_names, inplace=True)
 
-      if data.empty:
-          return None, "No se descargaron datos. Revisa los tickers o el rango de fechas."
+    if data.empty:
+        return None, "No se descargaron datos. Revisa los tickers o el rango de fechas."
 
-      # Rellenar valores faltantes (los fines de semana, por ejemplo)
-      data.ffill(inplace=True)
+    # Rellenar valores faltantes (los fines de semana, por ejemplo)
+    data.ffill(inplace=True)
 
-      return data, None # Retorna el DataFrame y None para el error
+    return data, None # Retorna el DataFrame y None para el error
 
   except Exception as e:
-      return None, f"Ocurrió un error al descargar los datos: {e}" # Retorna None y el mensaje de error
+    return None, f"Ocurrió un error al descargar los datos: {e}" # Retorna None y el mensaje de error
 
 
 # Descargar datos (se ejecuta siempre al cargar/refrescar la app)
